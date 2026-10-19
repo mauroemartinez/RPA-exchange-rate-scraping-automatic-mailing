@@ -1,4 +1,4 @@
-# 🤖 Argentinian Macroeconomic Automatic Mailing System
+# 🤖 AI-Powered Argentine Macroeconomic Automating Mailing and Reporting System
 > **An Analytics Engineering, Data Pipeline, and AI Automation infrastructure designed to systematically untangle, model, and monitor Argentina's volatile macroeconomic chaos with an automated mailing report.**
 
 [![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org)
