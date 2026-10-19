@@ -130,7 +130,7 @@ curl -s -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   https://api.cloudflare.com/client/v4/graphql -d '{"query":"query { viewer { accounts(filter:{accountTag:\"'$CUENTA'\"}) { workersInvocationsScheduled(limit: 20, filter:{datetime_geq:\"2026-10-16T00:00:00Z\"}, orderBy:[datetime_DESC]) { cron status datetime } } } }"}'
 ```
 
-Y la tercera, en GitHub: `gh run list --workflow corrida-diaria.yml --limit 5` tiene que mostrar una corrida `workflow_dispatch` por cada invocación con `success`. Cómo leer las respuestas:
+Y la tercera, en GitHub: `gh run list --workflow corrida-diaria.yml --limit 5` tiene que mostrar una corrida `workflow_dispatch` por cada invocación con `success`. Esa es la prueba definitiva: la analítica de Cloudflare puede tardar o quedar incompleta (el 19/10/2026 todavía no listaba las tres invocaciones del viernes 16, que GitHub sí había recibido). Cómo leer las respuestas:
 
 | Lo que se ve | Qué pasó | Qué hacer |
 |---|---|---|
@@ -140,6 +140,12 @@ Y la tercera, en GitHub: `gh run list --workflow corrida-diaria.yml --limit 5` t
 | Corrida en GitHub que termina `omitida` | La orden llegó y la corrida decidió no hacer nada: el día ya estaba hecho, era feriado o fin de semana | Nada |
 
 Si el día quedó sin reporte, primero el reporte y después el diagnóstico: `gh workflow run corrida-diaria.yml --ref main -f modo=real` lo manda en un par de minutos.
+
+### Si se renombra el repo
+
+El 19/10/2026 el repo pasó de `RPA-exchange-rate-scrapping-automatic-mailing` a `RPA-exchange-rate-scraping-automatic-mailing`. Lo único que tiene el nombre escrito es `REPO` en `cloudflare/wrangler.toml`, que arma la URL de la API a la que el Worker manda la orden: se cambia ahí y se redespliega con `npx wrangler@4 deploy`. Con el nombre viejo GitHub contesta con una redirección (307) que el Worker seguiría, pero es mejor no depender de eso. El token no se toca: un fine-grained PAT guarda el repo por su id, no por su nombre. Los secretos y las variables de Actions viajan con el repo.
+
+Los links al nombre viejo (el README, los mails ya enviados, un CV) siguen funcionando, porque GitHub redirige, incluidos los archivos crudos y el PowerPoint de la rama `reporte-ejecutivo`. Dejan de funcionar si alguien crea un repo nuevo con el nombre viejo, así que conviene actualizarlos igual: en este repo están en el README y en `reporte/templates/report_email.html`, y el cambio del mail obliga a regenerar el HTML de referencia de los tests (`ACTUALIZAR_GOLDEN=1 pytest tests/test_html_golden.py`). El clon local se actualiza con `git remote set-url origin https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing.git`.
 
 Si el token tuviera vencimiento y venciera (GitHub avisa por mail una semana antes), GitHub respondería 401, ninguna orden entraría y el control tampoco: el Worker figura fallido en el panel de Cloudflare y el día queda sin reporte hasta que alguien lo dispare a mano (`gh workflow run corrida-diaria.yml --ref main -f modo=real`). Se renueva con un token nuevo y `npx wrangler@4 secret put GITHUB_TOKEN`. Para apagar el Worker del todo: `npx wrangler@4 delete`.
 

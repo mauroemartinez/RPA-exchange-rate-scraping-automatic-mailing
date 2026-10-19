@@ -30,7 +30,7 @@ crons = [
 ]
 
 [vars]
-REPO = "mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing"
+REPO = "mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing"
 RAMA = "main"
 # El horario que dispara el control en vez de la corrida: tiene que ser uno de los de arriba
 CRON_CONTROL = "43 22 * * MON-FRI"

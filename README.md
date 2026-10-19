@@ -13,12 +13,12 @@
 [![Pydantic](https://img.shields.io/badge/Pydantic-validated-E92063?style=flat&logo=pydantic&logoColor=white)](https://docs.pydantic.dev)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=flat&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org)
 [![python-pptx](https://img.shields.io/badge/python--pptx-executive_deck-B7472A?style=flat)](https://python-pptx.readthedocs.io)
-[![Status](https://img.shields.io/badge/Status-Running_in_Production-28a745?style=flat)](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing)
+[![Status](https://img.shields.io/badge/Status-Running_in_Production-28a745?style=flat)](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing)
 
-[![CI](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing/actions/workflows/ci.yml/badge.svg)](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing/actions/workflows/ci.yml)
-[![Last commit](https://img.shields.io/github/last-commit/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing?style=flat&color=6c757d)](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing/commits/main)
-[![Top language](https://img.shields.io/github/languages/top/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing?style=flat&color=6c757d)](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing)
-[![Repo size](https://img.shields.io/github/repo-size/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing?style=flat&color=6c757d)](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing)
+[![CI](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/actions/workflows/ci.yml/badge.svg)](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/actions/workflows/ci.yml)
+[![Last commit](https://img.shields.io/github/last-commit/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing?style=flat&color=6c757d)](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/commits/main)
+[![Top language](https://img.shields.io/github/languages/top/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing?style=flat&color=6c757d)](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing)
+[![Repo size](https://img.shields.io/github/repo-size/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing?style=flat&color=6c757d)](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing)
 
 <p align="left">
   <a href="#-what-lands-in-the-inbox-every-business-day">📬 The mail</a> ·
@@ -59,15 +59,15 @@ The charts above are the real ones: the pipeline commits them to `Previews/` aft
 ---
 
 ## 📊 Today's Executive Deck
-The pipeline rebuilds a nine-slide PowerPoint every business day and keeps only the latest one, on the [`reporte-ejecutivo`](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing/tree/reporte-ejecutivo) branch.
+The pipeline rebuilds a nine-slide PowerPoint every business day and keeps only the latest one, on the [`reporte-ejecutivo`](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/tree/reporte-ejecutivo) branch.
 
 <p align="center">
-  <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scrapping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx">
+  <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx">
     <img src="Assets/Presentacion.jpg" width="900" alt="Executive deck: the nine slides">
   </a>
 </p>
 
-**[▶️ View today's deck online](https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scrapping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx)** · [⬇️ Download the .pptx](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing/raw/reporte-ejecutivo/Reporte%20Ejecutivo.pptx)
+**[▶️ View today's deck online](https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx)** · [⬇️ Download the .pptx](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/raw/reporte-ejecutivo/Reporte%20Ejecutivo.pptx)
 
 ---
 
@@ -205,7 +205,7 @@ A dry run leaves the seven charts, the executive deck, a browser preview and an 
 
 **Scheduling.** The run itself happens on GitHub Actions. The order comes from a Cloudflare Worker (`cloudflare/`, free plan): its cron triggers send a `workflow_dispatch` at 16:00 Argentina time, Monday to Friday, repeat it at 17:07 and 19:12 (a finished day ends as `omitida`) and ask for the daily control at 19:43; a dispatch starts in seconds. GitHub's own cron schedules stay in the workflows, switched on and off with the `CORRIDA_AUTOMATICA` repository variable, and are off: on the free plan they arrived hours late, and once crossed midnight. The full guide, in Spanish, is `docs/programacion-y-monitoreo.md`.
 
-**Executive deck.** Its FX, country-risk, inflation and variations charts are native PowerPoint charts: crisp at any size, restylable, and "Edit Data" opens the day's numbers. Their axis numbers and month names follow the viewer's regional settings, so the same file shows `1.500` in Argentina and `1,500` on an English system. The latest deck is always at [`Reporte Ejecutivo.pptx`](https://github.com/mauroemartinez/RPA-exchange-rate-scrapping-automatic-mailing/raw/reporte-ejecutivo/Reporte%20Ejecutivo.pptx), on the `reporte-ejecutivo` branch. That branch is rebuilt as a single commit every day, so it never accumulates versions. `python scripts/presentacion_ejecutiva.py` builds the same deck by hand from the warehouse.
+**Executive deck.** Its FX, country-risk, inflation and variations charts are native PowerPoint charts: crisp at any size, restylable, and "Edit Data" opens the day's numbers. Their axis numbers and month names follow the viewer's regional settings, so the same file shows `1.500` in Argentina and `1,500` on an English system. The latest deck is always at [`Reporte Ejecutivo.pptx`](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/raw/reporte-ejecutivo/Reporte%20Ejecutivo.pptx), on the `reporte-ejecutivo` branch. That branch is rebuilt as a single commit every day, so it never accumulates versions. `python scripts/presentacion_ejecutiva.py` builds the same deck by hand from the warehouse.
 
 **Macro report in PDF.** `python scripts/informe_macro.py --salida DIR` builds a multi-page report with the whole history of every indicator: the real dollar since 2016, the spreads, inflation and real rates, country risk, money, credit, debt, foreign trade and Bitcoin with its halving cycle. Meant to be rerun every quarter or so. Read-only.
 
