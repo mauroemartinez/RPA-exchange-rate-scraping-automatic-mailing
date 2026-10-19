@@ -107,7 +107,7 @@ Two closer views, drawn with the [diagram-design](https://github.com/cathrynlave
 | 1 | 🔒 **control** | Takes a Postgres advisory lock, skips weekends and national holidays, and refuses a scheduled run that starts before 14:00 (a late cron that crossed midnight) | Run ends as `omitida` |
 | 2 | 🗄️ **historico** | Reads the full history from Supabase (CSV fallback) and detects a day already done, or half done | Error and alert if the previous run died halfway |
 | 3 | 🕷️ **scraping** | Six sources at once: three Playwright browsers and three REST calls sharing one `asyncio.gather()` | Alert and stop |
-| 4 | ✅ **validacion** | Builds today's row and validates it with Pydantic before anything is persisted | Alert and stop |
+| 4 | ✅ **validacion** | Builds today's row, validates it with Pydantic and against the last stored values (a price that moves more than 5x is a misread decimal comma) before anything is persisted | Alert and stop |
 | 5 | 💾 **persistencia** | One atomic `INSERT ... ON CONFLICT ("Fecha")`; a row that appeared in between stops the run as `omitida` | No duplicate mail, ever |
 | 6 | 🧠 **ia** | One structured Gemini call: the summary plus a comment per chart, validated with Pydantic; seven models from best to worst, both keys, up to three rounds | The mail carries a placeholder and the row is marked as done without AI |
 | 7 | 📈 **indicadores** | Two years of BCRA series and the Treasury's gross debt workbook, each series validated on its own | Warning; the mail goes without that chart |
@@ -211,6 +211,8 @@ A dry run leaves the seven charts, the executive deck, a browser preview and an 
 
 * `06_series_macro.sql` creates `Fact_Series_Macro`, a long-format table for the monetary aggregates, inflation and debt series, each in its source unit. `python scripts/agregados_monetarios.py --guardar` loads their full history, and the daily run keeps them up to date.
 * `07_ai_paragraphs.sql` adds the `ai_secciones` column next to `ai_paragraph`: the per-chart AI comments as JSON, with the model that wrote them.
+
+**History cleanup.** `python scripts/depurar_historico.py` audits `Fact_Mercado_Macro` against independent sources (ArgentinaDatos, the BCRA and FRED) and lists every cell it would fix, with its reason: placeholders left by the bulk load, misread decimal commas, stale values and impossible buy-over-sell pairs. Nothing is written without `--aplicar`, which first saves a full copy of the table.
 
 **Daily control.** `python scripts/control_diario.py` fails and sends an alert when a business day ends without its row in the warehouse, which catches the run that never started. `--sin-alerta` only reports.
 

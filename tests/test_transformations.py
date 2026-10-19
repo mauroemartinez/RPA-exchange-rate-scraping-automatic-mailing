@@ -35,6 +35,32 @@ def test_validacion_rechaza_cotizaciones_no_positivas_o_nan(resultados, valor):
         t.validar_fila(t.armar_fila_nueva(roto, HOY))
 
 
+def test_un_dia_normal_no_tiene_saltos(resultados, historico):
+    t.controlar_saltos(t.armar_fila_nueva(resultados, HOY), historico)
+
+
+@pytest.mark.parametrize("columna, factor", [("TCV_MEP", 10), ("Solidario", 1000), ("TCV_Euro", 0.1)])
+def test_una_coma_mal_leida_frena_la_fila(resultados, historico, columna, factor):
+    fila = t.armar_fila_nueva(resultados, HOY)
+    fila[columna] = fila[columna] * factor
+    with pytest.raises(t.SaltoSospechoso, match=columna):
+        t.controlar_saltos(fila, historico)
+
+
+def test_una_devaluacion_real_no_es_un_salto(resultados, historico):
+    fila = t.armar_fila_nueva(resultados, HOY)
+    fila[["TCC_Billete", "TCV_Billete", "TCC_Divisas", "TCV_Divisas"]] *= 2.2  # 13/12/2023
+    t.controlar_saltos(fila, historico)
+
+
+def test_contra_un_historico_viejo_no_se_compara(resultados, historico):
+    # El CSV de respaldo puede ser una foto de hace años: no sirve para juzgar el dato de hoy
+    viejo = historico.assign(Fecha=(pd.to_datetime(historico["Fecha"]) - pd.Timedelta(days=400)).dt.strftime("%Y-%m-%d"))
+    fila = t.armar_fila_nueva(resultados, HOY)
+    fila["TCV_MEP"] *= 10
+    t.controlar_saltos(fila, viejo)
+
+
 def test_avisos_de_frescura(resultados):
     avisos = t.avisos_de_frescura(resultados, HOY)
     assert len(avisos) == 2

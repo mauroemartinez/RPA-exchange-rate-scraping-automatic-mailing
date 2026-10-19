@@ -50,6 +50,8 @@ Assets/arquitectura/*.html
 # El informe macro es privado por ahora: el script, su plantilla y su salida (datos
 # bajados y PDFs) quedan solo en la PC del autor y se comparten a mano
 informes/
+# Copias de la tabla y detalle de cambios de scripts/depurar_historico.py
+respaldos/
 scripts/informe_macro.py
 reporte/templates/informe_macro.html
 

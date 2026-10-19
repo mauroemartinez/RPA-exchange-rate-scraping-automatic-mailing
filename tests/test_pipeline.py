@@ -130,6 +130,18 @@ def test_fila_invalida_alerta_y_no_persiste(entorno, resultados):
     assert hechos["filas"] == [] and hechos["mails"] == []
 
 
+def test_un_precio_con_la_coma_corrida_alerta_y_no_persiste(entorno, resultados):
+    deps, hechos, salida = entorno
+    mep_por_diez = {**resultados.ambito, "TCV_MEP": resultados.ambito["TCV_MEP"] * 10}
+    rota = (resultados.bna, resultados.dolarhoy, mep_por_diez, resultados.riesgo_pais, resultados.bcra, resultados.fed)
+
+    r = pipeline.correr(pipeline.Opciones(salida=salida), replace(deps, scrapear=lambda: rota))
+
+    assert _estados(r)["validacion"] == "error"
+    assert hechos["alertas"] == ["validacion"]
+    assert hechos["filas"] == [] and hechos["mails"] == []
+
+
 def test_si_la_fila_de_hoy_ya_existe_no_se_repite(entorno, historico):
     deps, hechos, salida = entorno
     con_hoy = historico.copy()

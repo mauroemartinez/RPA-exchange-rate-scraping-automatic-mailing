@@ -7,7 +7,9 @@ Etapas, en el mismo orden que el notebook:
                 tampoco; otra corrida en curso o la fila de hoy ya guardada: tampoco
   historico     lee Fact_Mercado_Macro (o el CSV de contingencia si Supabase no responde)
   scraping      las seis fuentes en paralelo; si una cae, alerta y corta
-  validacion    arma la fila del día y la pasa por models.FilaMacro; si no cumple, alerta y corta
+  validacion    arma la fila del día, la pasa por models.FilaMacro y la compara con el último dato
+                guardado (un precio que se mueve más de 5 veces es una coma mal leída); si no
+                cumple, alerta y corta
   persistencia  INSERT de la fila sin duplicar la fecha
   ia            una llamada estructurada a Gemini: el resumen y un comentario por gráfico, guardados
                 en la misma fila; si nadie responde, el mail lleva el mensaje de reemplazo
@@ -331,7 +333,8 @@ def _etapas(opciones: Opciones, deps: Dependencias, registro: _Registro, engine,
         fila = transformations.armar_fila_nueva(res, fecha)
         try:
             transformations.validar_fila(fila)
-        except ValidationError as exc:
+            transformations.controlar_saltos(fila, historico)
+        except (ValidationError, transformations.SaltoSospechoso) as exc:
             resultado.alertado = deps.alertar_validacion(exc)
             raise
 
