@@ -95,7 +95,7 @@ The pipeline began as a faithful port of the original notebook, since deleted: f
 | `scripts/control_diario.py` | Dead man's switch: on a business day without today's row, exits 1 and emails an alert (`--sin-alerta` only reports). Read-only |
 | `reporte/scrapers/feriados.py` | National holidays from ArgentinaDatos, used to skip non-business days |
 | `.github/workflows/` | CI, plus the daily run and the daily control, scheduled but switched on only by the `CORRIDA_AUTOMATICA` repository variable |
-| `cloudflare/` | The Worker that triggers the run: `wrangler.toml` (the four cron triggers, in UTC) and `disparador.js` (the `workflow_dispatch` call, with retries), tested offline by `disparador.test.js` (`node --test`, also in CI). Deployed by hand with wrangler; its only secret is the GitHub PAT |
+| `cloudflare/` | The Worker that triggers the run: `wrangler.toml` (the four cron triggers, in UTC, and `REPO`, the repository the orders go to: update it and redeploy if the repo is ever renamed) and `disparador.js` (the `workflow_dispatch` call, with retries), tested offline by `disparador.test.js` (`node --test`, also in CI). Deployed by hand with wrangler; its only secret is the GitHub PAT |
 | `scripts/presentacion_ejecutiva.py` | Builds the same deck by hand from the stored row, the monthly inflation stored in `Fact_Series_Macro` and `Previews/` (a thin CLI over `reporte/presentacion.py`). Read-only |
 | `dashboard/app.py` | Prototype (roadmap phase 5), to be reviewed later: Streamlit dashboard over the full history, with its own `dashboard/requirements.txt`. Read-only, does not import `reporte/config.py` |
 | `notebooks/laboratorio_sql.ipynb` | Read-only SQL lab: every query run through its `consulta()` goes inside a `READ ONLY` transaction |
