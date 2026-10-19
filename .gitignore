@@ -47,8 +47,11 @@ Previews/*.pptx
 # HTML intermedio del diagrama: se regenera con Assets/arquitectura/construir.py
 Assets/arquitectura/*.html
 
-# Salida del informe macro (scripts/informe_macro.py): datos bajados y PDFs, se comparten a mano
+# El informe macro es privado por ahora: el script, su plantilla y su salida (datos
+# bajados y PDFs) quedan solo en la PC del autor y se comparten a mano
 informes/
+scripts/informe_macro.py
+reporte/templates/informe_macro.html
 
 # Cloudflare Worker (cloudflare/): caché de wrangler, variables locales con el token y paquetes de Node
 cloudflare/.wrangler/
