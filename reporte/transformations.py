@@ -53,6 +53,41 @@ def validar_fila(fila: pd.DataFrame) -> FilaMacro:
     return FilaMacro(**fila.iloc[0].to_dict())
 
 
+# Un precio que se multiplica o se divide por más de esto de un día para otro es una coma mal
+# leída: así entraron el MEP, las divisas y el solidario por 10 (y hasta por 10^10) al histórico.
+# Ningún movimiento real llegó a tanto: la devaluación del 13/12/2023 multiplicó el oficial por 2,2
+SALTO_MAXIMO = 5.0
+COLUMNAS_CON_SALTO = ("TCC_Blue", "TCV_Blue", "TCC_Billete", "TCV_Billete", "TCC_Divisas", "TCV_Divisas",
+                      "Solidario", "TCV_MEP", "riesgo_pais", "TCC_Euro", "TCV_Euro")
+# Contra un último dato más viejo que esto no se compara: el CSV de respaldo es una foto vieja
+ANTIGUEDAD_MAXIMA_DIAS = 30
+
+
+class SaltoSospechoso(ValueError):
+    """Un valor de la fila del día no es creíble frente al último guardado."""
+
+
+def controlar_saltos(fila: pd.DataFrame, historico: pd.DataFrame) -> None:
+    """Levanta SaltoSospechoso si un precio se movió más de SALTO_MAXIMO veces contra el último guardado."""
+    hoy = pd.Timestamp(fila["Fecha"].iloc[0])
+    fechas = pd.to_datetime(historico["Fecha"])
+    previos = historico[(fechas < hoy) & (fechas >= hoy - pd.Timedelta(days=ANTIGUEDAD_MAXIMA_DIAS))]
+    previos = previos.assign(_fecha=fechas).sort_values("_fecha", ascending=False)
+    problemas = []
+    for columna in COLUMNAS_CON_SALTO:
+        anteriores = pd.to_numeric(previos[columna], errors="coerce")
+        anteriores = anteriores[anteriores > 0]
+        nuevo = fila[columna].iloc[0]
+        if anteriores.empty or not nuevo > 0:
+            continue
+        ultimo, cuando = float(anteriores.iloc[0]), previos.loc[anteriores.index[0], "_fecha"]
+        if not 1 / SALTO_MAXIMO <= nuevo / ultimo <= SALTO_MAXIMO:
+            problemas.append(f"{columna}: {nuevo:g} contra {ultimo:g} del {cuando:%d/%m/%Y} (x{nuevo / ultimo:.2f})")
+    if problemas:
+        raise SaltoSospechoso("Valores no creíbles frente al último guardado, probablemente una coma mal leída: "
+                              + "; ".join(problemas))
+
+
 def avisos_de_frescura(res: ResultadosScraping, fecha: date) -> list[str]:
     """Fuentes cuyo último dato publicado no es de hoy (celdas 21 y 28).
 
