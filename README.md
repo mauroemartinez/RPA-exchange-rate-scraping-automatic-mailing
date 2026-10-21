@@ -128,7 +128,7 @@ Two closer views, drawn with the [diagram-design](https://github.com/cathrynlave
 | Ámbito | MEP dollar and blue euro | Playwright |
 | ArgentinaDatos | Country risk with its publication date; national holidays | REST |
 | BCRA statistics API | BADLAR rate, monthly and year-on-year inflation, monetary aggregates, letters, transitory advances, loans to the private sector, A3500 wholesale rate | REST, paginated |
-| St. Louis FRED | Effective federal funds rate, for the Fisher forwards | REST |
+| St. Louis FRED | Effective federal funds rate, for the Fisher forwards; when FRED fails, the same rate comes from the New York Fed, which publishes it | REST |
 | Secretaría de Finanzas | The Treasury's gross debt, monthly Excel, read by labels with provisional months flagged | HTTP + openpyxl |
 | Yahoo Finance | Bitcoin in USD | yfinance |
 | Google Gemini | The summary and the per-chart comments, with multi-key and multi-model failover | Structured JSON output |
