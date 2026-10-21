@@ -194,3 +194,31 @@ def test_la_compra_faltante_sale_de_la_misma_fuente_que_la_venta():
     nueva, _ = _cambios(tabla, TCC_Blue=[2.92, 2.93, 2.93], TCV_Blue=[2.93, 2.93, 2.95])
     assert nueva["TCC_Blue"].iloc[:2].tolist() == [2.92, 2.93]
     assert np.isnan(nueva["TCC_Blue"].iloc[2])  # la venta no es la de esa fuente: no se mezcla
+
+
+def test_el_solidario_quieto_con_el_oficial_fijo_no_esta_trabado():
+    # Del 14/08 al 15/11/2023 el billete estuvo fijo: el solidario quieto era correcto, aunque la
+    # tarjeta de referencia se moviera por los impuestos
+    fechas = pd.bdate_range("2023-08-15", periods=8)
+    tabla = _tabla(fechas, TCV_Billete=365.5, Solidario=639.63)
+    _, cambios = _cambios(tabla, Solidario=pd.Series(np.linspace(639.63, 932.02, 8), index=fechas))
+    assert cambios.empty
+
+
+def test_el_solidario_fuera_de_escala_contra_el_billete_del_dia():
+    fechas = pd.bdate_range("2022-10-31", periods=7)
+    billete = [161.5, 162.0, 162.5, 163.0, 163.5, 164.0, 165.5]
+    solidario = [266.48, 267.3, 268.13, 268.95, 269.78, 270.6, 2737.0]  # x1,65, y el último x10
+    tabla = _tabla(fechas, TCV_Billete=billete, Solidario=solidario)
+    nueva, cambios = _cambios(tabla, Solidario=pd.Series(np.array(billete) * 1.75, index=fechas))
+    assert nueva["Solidario"].iloc[-1] == pytest.approx(273.7)
+    assert cambios["motivo"].tolist() == ["coma decimal corrida (x10^1, contra el billete del día)"]
+
+
+def test_un_cambio_de_recargo_que_confirma_la_tarjeta_no_se_toca():
+    fechas = pd.bdate_range("2023-12-06", periods=7)
+    billete = [379.0] * 5 + [820.0, 820.62]
+    solidario = [966.45] * 5 + [1312.0, 1312.99]  # x2,55 y, desde la devaluación, x1,6
+    tabla = _tabla(fechas, TCV_Billete=billete, Solidario=solidario)
+    _, cambios = _cambios(tabla, Solidario=pd.Series(solidario, index=fechas))
+    assert cambios.empty

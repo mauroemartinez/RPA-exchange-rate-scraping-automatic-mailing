@@ -199,6 +199,22 @@ def correcciones(tabla: pd.DataFrame, ref: dict[str, pd.Series]) -> tuple[pd.Dat
                 motivo, corregido = min(opciones.items(), key=lambda o: abs(o[1] / base - 1))
                 if abs(corregido / base - 1) <= 0.10:
                     cambiar(fecha, columna, corregido, motivo)
+    # El solidario es el billete del día por el recargo vigente (x1,65 en 2022, x2,55 a fines de
+    # 2023, x1,3 desde 2025). Si su relación con el billete se aparta más de 20% de la de los días
+    # previos: con una potencia de 10 exacta, se corre la coma; si coincide con la tarjeta de
+    # ArgentinaDatos, es un cambio de recargo y queda; si no, pasa a esa tarjeta cuando ella sí
+    # respeta la relación. Sin nada de eso, no se toca.
+    relacion = nueva["Solidario"] / nueva["TCV_Billete"]
+    plausible = relacion.where(relacion.between(1.0, 3.5)).dropna()
+    previa = plausible.rolling(5, min_periods=1).median().reindex(nueva.index).ffill().shift(1)
+    tarjeta = referencia("Solidario")
+    for fecha in relacion.index[(relacion / previa - 1).abs() > 0.20]:
+        valor, esperado, t = nueva.at[fecha, "Solidario"], nueva.at[fecha, "TCV_Billete"] * previa[fecha], tarjeta[fecha]
+        k = _escala(valor, esperado, 0.02)
+        if k:
+            cambiar(fecha, "Solidario", valor / 10**k, f"coma decimal corrida (x10^{k}, contra el billete del día)")
+        elif pd.notna(t) and abs(valor / t - 1) > 0.03 and abs(t / esperado - 1) <= 0.03:
+            cambiar(fecha, "Solidario", t, "fuera de su relación con el billete: la tarjeta de ArgentinaDatos")
     # El euro sin referencia: se compara con la mediana de los días vecinos, sin el día mismo
     for columna in ("TCC_Euro", "TCV_Euro"):
         s = nueva[columna].dropna()
@@ -254,9 +270,13 @@ def correcciones(tabla: pd.DataFrame, ref: dict[str, pd.Series]) -> tuple[pd.Dat
     # 5. Valores estancados: el scraper repitió el dato mientras la referencia se movía. Se
     #    conserva el primer día del tramo, que sí se leyó, y el resto pasa a la referencia (o
     #    queda vacío el día que no la hay). La compra se mide con la venta, que tiene más fuentes.
+    #    El solidario es el billete por un recargo: se mide con el billete guardado, no con la
+    #    tarjeta, que se mueve también cuando cambian los impuestos (del 14/08 al 15/11/2023 el
+    #    oficial estuvo fijo en 365,50 y el solidario, quieto en 639,63, era correcto).
     guia = {"TCC_Blue": "TCV_Blue", "TCC_Euro": "TCV_Euro"}
     for columna in ("TCC_Blue", "TCV_Blue", "TCV_MEP", "Solidario", "TCC_Euro", "TCV_Euro"):
-        r, movimiento = referencia(columna), referencia(guia.get(columna, columna))
+        r = referencia(columna)
+        movimiento = nueva["TCV_Billete"] if columna == "Solidario" else referencia(guia.get(columna, columna))
         for fechas in _rachas(nueva[columna]):
             if not RACHA_ESTANCADA <= len(fechas) < RACHA_RELLENO:
                 continue

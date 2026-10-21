@@ -137,6 +137,37 @@ Every value is stored in its source unit and with its source date; conversions t
 
 ---
 
+## 🗄️ The Historical Data
+
+`Fact_Mercado_Macro` holds one row per business day since December 1998 (7,116 rows in October 2026). The years before October 2022 came from a bulk load of a spreadsheet; since then every row is scraped. In October 2026 the whole table was audited against the archives of the same sources the scrapers read, and 26,019 cells were corrected, each pass inside one transaction and after a full copy of the table (`scripts/depurar_historico.py`, see [Operational Tooling](#-operational-tooling)).
+
+| Column | Real data since | Where the history comes from |
+|---|---|---|
+| Blue, sell | January 2002 | DolarHoy's own archive from 2011; Ámbito's before that (from 2011 to 2020 the two are identical, day by day). Before 2002 there was no parallel market: one peso was one dollar |
+| Blue, buy | January 2002 | DolarHoy's archive has no buy price: it comes from Ámbito or ArgentinaDatos on the days their sell price matches DolarHoy's, so each pair has a single source. Days where neither matches stay empty |
+| Bill (billete), buy and sell | January 2003 | Banco Nación's own archive, to the cent |
+| Wire (divisas), MEP | October 2022 | Daily scraping, checked against the BCRA's A3500 and ArgentinaDatos |
+| Solidario | December 2019 | ArgentinaDatos' card dollar for the bulk-loaded years; since the scraping, the bill rate times the surcharge in force (1.3 since 2025) |
+| Country risk | December 1998 | Complete |
+| Blue euro | April 2023 | Ámbito, the scraper's source, which publishes it since June 2023 |
+| FED and BADLAR rates | May 2023 | The New York Fed's EFFR and the BCRA |
+
+What the audit corrected:
+
+| Problem | Example | How it was confirmed |
+|---|---|---|
+| Placeholders from the bulk load | The blue at 292, the solidario at 275.55 and the euro at 455 for 6,000+ days | The same value for hundreds of days while every source moved. The last day of each run, the first real one, was kept |
+| A lost zero after the decimal comma | Bill 3.08 stored as 38, 18.05 as 185 (2003 to 2017) | The stored digits are exactly the Banco Nación's figure for that day with the zero dropped |
+| Decimal comma shifted | Bill 3.155 as 3155, MEP 1,460.5 as 14,605, solidario up to 10^10 times | An exact power of 10 against the source; the solidario, against that day's bill rate times its surcharge |
+| Day and month swapped | The rows of 11 January, February, March, April, July, August and October 2022 held the bill rate of 1 to 10 November 2022 | Their values are identical to those of the date with day and month reversed, and the Banco Nación says something else for that day |
+| Stale values | The blue stuck at 1,520/1,540 from 7 August to 8 September 2026; the euro stuck from May to July 2026 | The source moved while the stored value did not. Ámbito published no blue euro between 6 May and 14 July 2026: those days stay empty. A value that stays still while its base does is not stale: from 14 August to 15 November 2023 the official rate was fixed, and so was the solidario |
+| Wrong FED rate | 58% instead of 5.08% (2023 to 2025) | The New York Fed's EFFR for that day |
+| Buy above sell | The euro on 29 January 2024 | Replaced with the source's pair for that day |
+
+Where no source exists, a cell stays empty rather than holding an invented number. The intraday differences against the archives (the scraper reads at 16:00, the archives keep the close) are real readings and were left as they are. Two guards keep these errors from coming back: the daily run stops any price that moves more than five times against the last stored one, and every date is parsed with its format written out, because `pd.to_datetime("01/11/2022")` without one reads 11 January.
+
+---
+
 ## 📋 Project Overview
 
 This repository features a robust, portfolio-grade Robotic Process Automation (RPA) and Data Engineering pipeline tailored to track, store, and analyze the complex Argentine economic and exchange rate landscape.
@@ -212,7 +243,7 @@ A dry run leaves the seven charts, the executive deck, a browser preview and an 
 * `06_series_macro.sql` creates `Fact_Series_Macro`, a long-format table for the monetary aggregates, inflation and debt series, each in its source unit. `python scripts/agregados_monetarios.py --guardar` loads their full history, and the daily run keeps them up to date.
 * `07_ai_paragraphs.sql` adds the `ai_secciones` column next to `ai_paragraph`: the per-chart AI comments as JSON, with the model that wrote them.
 
-**History cleanup.** `python scripts/depurar_historico.py` audits `Fact_Mercado_Macro` against independent sources (ArgentinaDatos, the BCRA and FRED) and lists every cell it would fix, with its reason: placeholders left by the bulk load, misread decimal commas, stale values and impossible buy-over-sell pairs. Nothing is written without `--aplicar`, which first saves a full copy of the table.
+**History cleanup.** `python scripts/depurar_historico.py` audits `Fact_Mercado_Macro` against the archives of the scrapers' own sources (Banco Nación, DolarHoy, Ámbito) plus ArgentinaDatos, the BCRA and the New York Fed, and lists every cell it would fix, with its reason: placeholders left by the bulk load, misread decimal commas, swapped day and month, stale values, missing buy prices and impossible buy-over-sell pairs. Nothing is written without `--aplicar`, which first saves a full copy of the table. Run in October 2026; a rerun finds nothing to fix.
 
 **Daily control.** `python scripts/control_diario.py` fails and sends an alert when a business day ends without its row in the warehouse, which catches the run that never started. `--sin-alerta` only reports.
 
