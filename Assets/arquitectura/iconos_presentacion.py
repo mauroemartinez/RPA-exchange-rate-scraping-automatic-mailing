@@ -6,8 +6,10 @@ falta para cambiar un ícono.
 
 Uso: python iconos_presentacion.py
 
-El de GlobalAIze es provisorio (una G sobre el degradé de la marca) hasta tener
-el logo: si existe reporte/recursos/globalaize_logo.png, la presentación usa ese.
+El logo de GlobalAIze, reporte/recursos/globalaize_logo.png (1024 px, fondo blanco),
+sale del SVG del sitio (globalaize/src/assets/brand/globalaize-logo.svg) pasado a PNG
+con Chromium; de él sale la versión redondeada de la fila de links. Si faltara, la
+presentación usa globalaize.png, el ícono provisorio (una G sobre el degradé de la marca).
 """
 
 import re
