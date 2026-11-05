@@ -699,7 +699,7 @@ def armar(
     _tarjeta_fondo(cierre, Inches(8.45), Inches(1.1), Inches(4.43), Inches(5.55), OSCURO)
     _texto(cierre, Inches(8.75), Inches(1.4), Inches(4), Inches(0.4), "CONTACTO", 14, ACENTO_CLARO, True)
     _texto(cierre, Inches(8.75), Inches(1.85), Inches(4), Inches(0.9),
-           "Reporte hecho íntegramente en Python por Mauro E. Martinez, de GlobalAIze (sitio en construcción).", 14, CLARO)
+           "Reporte hecho íntegramente en Python por Mauro E. Martinez, de GlobalAIze.", 14, CLARO)
     _links(cierre, Inches(8.65), Inches(3.0), Inches(0.5), separacion=Inches(1.03))
     _texto(cierre, Inches(8.75), Inches(4.45), Inches(4), Inches(0.8),
            f"☕ ¿Te sirvió el reporte? Podés apoyar el proyecto al alias {ALIAS}", 15, BLANCO, True)

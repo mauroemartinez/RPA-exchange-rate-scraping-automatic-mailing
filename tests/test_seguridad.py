@@ -3,6 +3,7 @@
 import json
 import smtplib
 from email.mime.text import MIMEText
+from unittest.mock import MagicMock
 
 import httpx
 import pytest
@@ -11,6 +12,27 @@ import pipeline
 from reporte import config, email_report, mailer
 from reporte.scrapers import fed
 from reporte.scrapers.utils import ScraperError, run_async
+
+
+def test_los_cco_no_viajan_en_el_contenido_smtp(monkeypatch):
+    smtp = MagicMock()
+    smtp.__enter__.return_value = smtp
+    smtp.sendmail.return_value = {}
+    monkeypatch.setattr(smtplib, "SMTP", lambda *a, **k: smtp)
+    mensaje = MIMEText("Contenido del reporte")
+    mensaje["To"] = "remitente@example.com"
+    mensaje["Bcc"] = "privado@example.com"
+    mensaje["Resent-Bcc"] = "otro-privado@example.com"
+    destinatarios = ["privado@example.com", "otro-privado@example.com"]
+
+    mailer.enviar_smtp(mensaje, destinatarios)
+
+    _, sobre, contenido = smtp.sendmail.call_args.args
+    assert sobre == destinatarios
+    assert "bcc:" not in contenido.lower()
+    assert all(d not in contenido for d in destinatarios)
+    assert mensaje["Bcc"] == "privado@example.com"
+    assert mensaje["Resent-Bcc"] == "otro-privado@example.com"
 
 
 def test_el_error_de_fred_no_lleva_la_api_key():

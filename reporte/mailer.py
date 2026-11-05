@@ -9,6 +9,7 @@ import logging
 import smtplib
 import ssl
 import traceback
+from copy import copy
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -25,6 +26,10 @@ def enviar_smtp(mensaje, destinatarios: list[str]) -> None:
 
     Es el único lugar que habla SMTP: lo usan las alertas y el reporte.
     """
+    # sendmail no elimina CCO: las direcciones solo deben viajar en el sobre SMTP.
+    mensaje = copy(mensaje)
+    del mensaje["Bcc"]
+    del mensaje["Resent-Bcc"]
     context = ssl.create_default_context()
     with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=60) as smtp:
         smtp.ehlo()
