@@ -37,6 +37,12 @@ CLAUDE.md
 # Apuntes personales de estudio del código
 APUNTES.md
 
+# Documentación interna y auditorías: el repositorio es público.
+/docs/
+/.security-*.json
+# Los mensajes guardados pueden contener destinatarios y datos privados.
+*.eml
+
 # El PowerPoint diario no va en main: se publica solo en la rama reporte-ejecutivo
 Previews/*.pptx
 

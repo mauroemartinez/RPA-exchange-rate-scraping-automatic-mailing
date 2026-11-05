@@ -211,7 +211,6 @@ The system automates the ingestion of highly volatile financial variables, ensur
 ├── sql/                     SQL applied by hand in Supabase: schema, migrations, cleaning
 ├── notebooks/               The read-only SQL lab
 ├── dashboard/               Streamlit prototype, read-only, with its own requirements
-├── docs/                    Roadmap evaluations and runbooks (Spanish)
 ├── Assets/                  Architecture diagram, README images and their generators
 ├── Previews/                Daily charts, auto-committed by the pipeline
 ├── .github/workflows/       CI, plus the daily run and daily control
@@ -234,7 +233,7 @@ python pipeline.py                                    # the real run
 
 A dry run leaves the seven charts, the executive deck, a browser preview and an `.eml` of the report in a temp folder. The exit code is 1 when any stage fails, so schedulers can alert on it. Other flags: `--sin-mail`, `--sin-push`, `--forzar` (redo a day), `--desde HH:MM` (refuse a run that starts earlier, for late crons), `--json FILE`.
 
-**Scheduling.** The run itself happens on GitHub Actions. The order comes from a Cloudflare Worker (`cloudflare/`, free plan): its cron triggers send a `workflow_dispatch` at 16:00 Argentina time, Monday to Friday, repeat it at 17:07 and 19:12 (a finished day ends as `omitida`) and ask for the daily control at 19:43; a dispatch starts in seconds. GitHub's own cron schedules stay in the workflows, switched on and off with the `CORRIDA_AUTOMATICA` repository variable, and are off: on the free plan they arrived hours late, and once crossed midnight. The full guide, in Spanish, is `docs/programacion-y-monitoreo.md`.
+**Scheduling.** The run itself happens on GitHub Actions. The order comes from a Cloudflare Worker (`cloudflare/`, free plan): its cron triggers send a `workflow_dispatch` at 16:00 Argentina time, Monday to Friday, repeat it at 17:07 and 19:12 (a finished day ends as `omitida`) and ask for the daily control at 19:43; a dispatch starts in seconds. GitHub's own cron schedules stay in the workflows, switched on and off with the `CORRIDA_AUTOMATICA` repository variable, and are off: on the free plan they arrived hours late, and once crossed midnight.
 
 **Executive deck.** Its FX, country-risk, inflation and variations charts are native PowerPoint charts: crisp at any size, restylable, and "Edit Data" opens the day's numbers. Their axis numbers and month names follow the viewer's regional settings, so the same file shows `1.500` in Argentina and `1,500` on an English system. The latest deck is always at [`Reporte Ejecutivo.pptx`](https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/raw/reporte-ejecutivo/Reporte%20Ejecutivo.pptx), on the `reporte-ejecutivo` branch. That branch is rebuilt as a single commit every day, so it never accumulates versions. `python scripts/presentacion_ejecutiva.py` builds the same deck by hand from the warehouse.
 
