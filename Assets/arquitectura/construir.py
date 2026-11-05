@@ -249,7 +249,7 @@ COLUMNAS = [
             <div><img src="{si('microsoftpowerpoint', '#E0592F')}" style="width:46px;margin:3px 0 2px"><div class="cap chica">PowerPoint</div></div>
           </div>""",
         "items": [
-            "6 charts: FX &amp; risk, inflation, variations, BTC, money, debt in USD",
+            "7 charts: FX, risk, inflation, variations, BTC, money, debt in USD",
             "Spreads &amp; Fisher forwards",
             "HTML/CSS email template",
             "Executive PowerPoint deck",
