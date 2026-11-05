@@ -47,7 +47,9 @@ def crear_engine() -> Engine:
         max_overflow=0,
         pool_recycle=300,
         pool_pre_ping=True,
-        connect_args={"connect_timeout": 30},
+        # sslmode=require: sin TLS no se conecta. El valor por defecto de libpq, prefer, acepta
+        # una conexión en claro si el servidor no ofrece TLS
+        connect_args={"connect_timeout": 30, "sslmode": "require"},
     )
 
 

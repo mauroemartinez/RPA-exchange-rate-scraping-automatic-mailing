@@ -13,7 +13,7 @@ attrs==26.1.0
     #   -c dashboard/../requirements-dev.txt
     #   jsonschema
     #   referencing
-certifi==2026.4.22
+certifi==2026.10.23
     # via
     #   -c dashboard/../requirements-dev.txt
     #   -c dashboard/../requirements.txt
@@ -41,8 +41,6 @@ h11==0.16.0
     #   -c dashboard/../requirements-dev.txt
     #   -c dashboard/../requirements.txt
     #   uvicorn
-httptools==0.8.0
-    # via streamlit
 idna==3.20
     # via
     #   -c dashboard/../requirements-dev.txt
@@ -91,7 +89,7 @@ pandas==3.0.2
     #   -c dashboard/../requirements.txt
     #   -r dashboard/requirements.in
     #   streamlit
-pillow==12.3.0
+pillow==13.0.0
     # via
     #   -c dashboard/../requirements-dev.txt
     #   -c dashboard/../requirements.txt
@@ -149,10 +147,8 @@ sqlalchemy==2.0.49
     #   -r dashboard/requirements.in
 starlette==1.6.0
     # via streamlit
-streamlit==1.65.0
+streamlit==1.67.0
     # via -r dashboard/requirements.in
-toml==0.10.2
-    # via streamlit
 typing-extensions==4.15.0
     # via
     #   -c dashboard/../requirements-dev.txt

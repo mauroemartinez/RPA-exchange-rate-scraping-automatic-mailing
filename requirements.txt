@@ -8,7 +8,7 @@ anyio==4.14.2
     #   httpx
 beautifulsoup4==4.14.3
     # via yfinance
-certifi==2026.4.22
+certifi==2026.10.23
     # via
     #   curl-cffi
     #   httpcore
@@ -30,7 +30,7 @@ cycler==0.12.1
     # via matplotlib
 distro==1.9.0
     # via google-genai
-dnspython==2.8.0
+dnspython==2.9.2
     # via email-validator
 email-validator==2.3.0
     # via pydantic
@@ -97,7 +97,7 @@ pandas==3.0.2
     #   yfinance
 peewee==4.0.6
     # via yfinance
-pillow==12.3.0
+pillow==13.0.0
     # via
     #   matplotlib
     #   python-pptx
@@ -109,7 +109,7 @@ protobuf==7.35.0
     # via yfinance
 psycopg2-binary==2.9.12
     # via -r requirements.in
-pyasn1==0.6.4
+pyasn1==0.6.5
     # via pyasn1-modules
 pyasn1-modules==0.4.2
     # via google-auth
