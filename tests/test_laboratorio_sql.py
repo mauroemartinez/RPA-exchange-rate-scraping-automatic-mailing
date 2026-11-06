@@ -29,8 +29,11 @@ def test_auditoria_del_notebook_detecta_escala_sin_escribir(monkeypatch, factor)
 
     entorno = {"pd": pd, "consulta": consulta, "display": lambda objeto: None}
     for celda in notebook["cells"]:
-        if celda["cell_type"] == "code" and celda["id"].startswith("auditoria-"):
-            exec(compile("".join(celda["source"]), celda["id"], "exec"), entorno)
+        # Las celdas de la auditoría se reconocen por su contenido: Jupyter renumera los
+        # identificadores de las celdas al guardar, así que no sirven para encontrarlas
+        fuente = "".join(celda["source"])
+        if celda["cell_type"] == "code" and "hallazgos" in fuente:
+            exec(compile(fuente, f"celda-{celda.get('id', '?')}", "exec"), entorno)
     hallazgos = entorno["errores_escala"]
     if factor == 1:
         assert hallazgos.empty
