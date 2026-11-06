@@ -85,3 +85,19 @@ def test_la_alerta_no_induce_a_mandar_el_mail_dos_veces(entorno, capsys):
     control_diario.main(["--sin-alerta"])
     salida = capsys.readouterr().out
     assert "--sin-mail" in salida and "YA SALIÓ" in salida
+
+
+def test_con_desde_no_controla_antes_de_esa_hora(entorno, monkeypatch, capsys):
+    # Un horario de GitHub que llega pasada la medianoche no debe controlar el día siguiente
+    from datetime import datetime
+
+    usar, alertas = entorno
+    engine = usar(None)
+    monkeypatch.setattr(control_diario.fechas, "ahora", lambda: datetime(2026, 10, 7, 0, 55))
+    assert control_diario.main(["--desde", "14:00"]) == 0
+    assert "no corresponde controlar todavía" in capsys.readouterr().out
+    assert engine.sql == [] and alertas == []
+
+    monkeypatch.setattr(control_diario.fechas, "ahora", lambda: datetime(2026, 10, 6, 19, 50))
+    assert control_diario.main(["--desde", "14:00"]) == 1
+    assert len(alertas) == 1  # pasada la hora, controla y alerta como siempre

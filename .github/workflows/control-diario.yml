@@ -6,10 +6,15 @@
 # Desde el 14/10/2026 lo pide el Worker de Cloudflare de cloudflare/ a las 19:43
 # de Argentina, con la alerta prendida (alertar=true), después del último de los
 # tres intentos de la corrida (16:00, 17:07 y 19:12): si a esa hora la fila del
-# día no está, ninguno salió. El horario de abajo es el respaldo: se prende con el
-# mismo interruptor que la corrida, la variable del repo CORRIDA_AUTOMATICA en si,
-# y hoy está apagado. A mano se puede correr siempre y, si no se pide lo
-# contrario, sin mandar el mail de alerta.
+# día no está, ninguno salió. El horario de abajo corre SIEMPRE, sin depender de
+# CORRIDA_AUTOMATICA: cubre al Worker caído o su token vencido, cuando ninguna orden
+# entra, ni la del control. No cubre todo: el 05/11/2026 un cambio de permisos de
+# Actions por API dejó este workflow y la corrida en disabled_manually, y el 06/11
+# quedó sin reporte y sin aviso (se vio por GitHub: `gh workflow list --all`, y se
+# arregló con `gh workflow enable`). GitHub ejecuta este
+# horario con horas de atraso, a veces pasada la medianoche: por eso lleva --desde
+# 14:00, para no controlar un día que todavía no empezó. A mano se puede correr
+# siempre y, si no se pide lo contrario, sin mandar el mail de alerta.
 name: Control diario
 
 on:
@@ -27,8 +32,6 @@ permissions:
 
 jobs:
   control:
-    # GitHub compara sin distinguir mayúsculas: vale si, Si o SI, y también sí con tilde
-    if: github.event_name != 'schedule' || vars.CORRIDA_AUTOMATICA == 'si' || vars.CORRIDA_AUTOMATICA == 'sí'
     runs-on: ubuntu-24.04  # fija: un cambio de versión de Ubuntu puede romper las dependencias de Chromium
     timeout-minutes: 10
     env:
@@ -64,7 +67,9 @@ jobs:
 
       - name: Control
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.alertar }}" = "true" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python scripts/control_diario.py --desde 14:00
+          elif [ "${{ inputs.alertar }}" = "true" ]; then
             python scripts/control_diario.py
           else
             python scripts/control_diario.py --sin-alerta

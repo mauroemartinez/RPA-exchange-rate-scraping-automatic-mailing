@@ -14,6 +14,11 @@ todavía no existe y el control da falla, como corresponde).
 Uso:
     python scripts/control_diario.py               # controla y, si falta la fila, alerta por mail
     python scripts/control_diario.py --sin-alerta  # controla y solo informa en consola
+    python scripts/control_diario.py --desde 14:00 # si en Argentina es más temprano, no controla
+
+El horario de GitHub llega con horas de atraso: --desde evita que un control de las
+19:43 que GitHub ejecuta pasada la medianoche controle el día siguiente, cuya fila
+todavía no puede existir, y mande una alerta falsa.
 """
 
 import argparse
@@ -43,8 +48,15 @@ def fila_de_hoy(engine, hoy) -> tuple[bool, bool]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--sin-alerta", action="store_true", help="No manda el mail de alerta, solo informa")
+    parser.add_argument("--desde", metavar="HH:MM", help="Antes de esta hora de Argentina no controla (sale con 0)")
     args = parser.parse_args(argv)
 
+    if args.desde:
+        ahora = fechas.ahora()
+        horas, minutos = (int(x) for x in args.desde.split(":"))
+        if (ahora.hour, ahora.minute) < (horas, minutos):
+            print(f"{ahora:%Y-%m-%d %H:%M} en Argentina: antes de las {args.desde}, no corresponde controlar todavía")
+            return 0
     hoy = fechas.hoy()
     if hoy.weekday() >= 5:
         print(f"{hoy}: fin de semana, no corresponde corrida")
