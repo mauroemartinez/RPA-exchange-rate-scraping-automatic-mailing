@@ -34,8 +34,10 @@ log = logging.getLogger(__name__)
 RAIZ = Path(__file__).resolve().parent
 # El logo de GlobalAIze va adjunto inline como los gráficos (cid:logo), no por URL:
 # así se ve aunque el cliente bloquee las imágenes remotas
-LOGO = RAIZ / "recursos" / "globalaize_logo.png"
+LOGO = RAIZ / "recursos" / "globalaize_logo.png"  # el logo completo, para el encabezado
 CID_LOGO = "logo"
+ICONO = RAIZ / "recursos" / "globalaize.png"  # la marca sola, para el pie, donde el logo completo no se lee
+CID_ICONO = "icono"
 
 # Cupo de dólares del resumen ejecutivo (costo blue contra oficial)
 CANTIDAD_USD = 100
@@ -258,6 +260,10 @@ def armar_mensaje(
     logo.add_header("Content-ID", f"<{CID_LOGO}>")
     logo.add_header("Content-Disposition", "inline", filename="GlobalAIze.png")
     em.attach(logo)
+    icono = MIMEImage(ICONO.read_bytes())
+    icono.add_header("Content-ID", f"<{CID_ICONO}>")
+    icono.add_header("Content-Disposition", "inline", filename="GlobalAIze-icono.png")
+    em.attach(icono)
 
     if csv is not None:
         adjunto = MIMEText(csv, "csv")

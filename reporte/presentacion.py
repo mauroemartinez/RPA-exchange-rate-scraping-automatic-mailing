@@ -82,7 +82,7 @@ MAIL = "mauro@globalaize.com"
 
 
 def _icono_globalaize() -> Path:
-    """El logo de GlobalAIze si está en recursos/; si no, el ícono provisorio."""
+    """El logo completo de GlobalAIze para la portada; si faltara, el ícono de la marca."""
     logo = RECURSOS / "globalaize_logo.png"
     return logo if logo.exists() else RECURSOS / "globalaize.png"
 
@@ -91,7 +91,7 @@ def _icono_globalaize() -> Path:
 LINKS = [
     ("linkedin.png", "LinkedIn", "https://linkedin.com/in/mauroemartinez/"),
     ("github.png", "GitHub", "https://github.com/mauroemartinez/"),
-    (None, "GlobalAIze", "https://www.globalaize.com"),
+    ("globalaize.png", "GlobalAIze", "https://www.globalaize.com"),
     ("linkedin.png", "GlobalAIze en LinkedIn", "https://www.linkedin.com/company/globalaize"),
 ]
 
@@ -334,11 +334,12 @@ def _links(slide, x, y, lado, color_rotulo=CLARO, separacion=None, omitir=()):
     links = [link for link in LINKS if link[1] not in omitir]
     if x is None:
         x = (ANCHO - separacion * len(links)) // 2
-    # El logo de GlobalAIze, con las esquinas redondeadas como los demás íconos
-    redondeado = RECURSOS / "globalaize_logo_redondeado.png"
-    ruta_globalaize = redondeado if redondeado.exists() else _icono_globalaize()
+    # Sobre una superficie oscura (rótulos claros) el ícono azul marino de GlobalAIze se perdería:
+    # va la variante con la marca en azul sobre blanco
     for i, (icono, rotulo, url) in enumerate(links):
-        ruta = ruta_globalaize if icono is None else RECURSOS / icono
+        if icono == "globalaize.png" and color_rotulo == CLARO:
+            icono = "globalaize_claro.png"
+        ruta = RECURSOS / icono
         izquierda = x + i * separacion
         _con_link(slide.shapes.add_picture(str(ruta), izquierda + (separacion - lado) // 2, y, lado, lado), url)
         _texto(slide, izquierda, y + lado + Inches(0.03), separacion, Inches(0.5), rotulo, 11,

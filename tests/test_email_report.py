@@ -86,7 +86,7 @@ def test_armar_mensaje(imagenes):
     partes = [(p.get_content_type(), p.get("Content-ID")) for p in msg.walk() if not p.is_multipart()]
     assert partes == [("text/html", None), ("image/jpeg", "<image1>"), ("image/jpeg", "<image2>"),
                       ("image/jpeg", "<image4>"), ("image/jpeg", "<image5>"), ("image/jpeg", "<image6>"),
-                      ("image/jpeg", "<image7>"), ("image/png", "<logo>"), ("text/csv", None)]
+                      ("image/jpeg", "<image7>"), ("image/png", "<logo>"), ("image/png", "<icono>"), ("text/csv", None)]
     assert msg["Bcc"] == "a@example.com, b@example.com"
     assert msg["To"] == "remitente@example.com"
 

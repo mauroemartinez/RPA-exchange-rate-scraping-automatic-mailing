@@ -6,10 +6,13 @@ falta para cambiar un ícono.
 
 Uso: python iconos_presentacion.py
 
-El logo de GlobalAIze, reporte/recursos/globalaize_logo.png (1024 px, fondo blanco),
-sale del SVG del sitio (globalaize/src/assets/brand/globalaize-logo.svg) pasado a PNG
-con Chromium; de él sale la versión redondeada de la fila de links. Si faltara, la
-presentación usa globalaize.png, el ícono provisorio (una G sobre el degradé de la marca).
+GlobalAIze tiene dos imágenes, las dos sacadas del repo del sitio (globalaize/):
+- globalaize_logo.png (1024 px, fondo blanco): el logo completo, marca más nombre, de
+  src/assets/brand/globalaize-logo.svg pasado a PNG con Chromium. Va en la portada del
+  deck y en el encabezado del mail.
+- globalaize.png: el ícono, la proa en blanco sobre el degradé azul marino del sitio, con
+  la geometría de public/favicon.svg y las esquinas redondeadas como los demás íconos. Va
+  donde el logo completo no se leería: la fila de links del deck y el pie del mail.
 """
 
 import re
@@ -31,6 +34,24 @@ def _github() -> str:
     )
 
 
+# La marca de GlobalAIze (la proa): los trazos de public/favicon.svg del sitio
+MARCA_GLOBALAIZE = (
+    '<rect x="126" y="23" width="3" height="18" rx="0.8"/><rect x="122" y="33.5" width="11" height="2.6" rx="0.8"/><rect x="110" y="39" width="35" height="3.4" rx="1"/><rect x="125.5" y="47" width="4" height="13.5" rx="1"/><rect x="125.5" y="65" width="4" height="3.5" rx="1"/><rect x="125.5" y="73" width="4" height="25.5" rx="1"/><rect x="114.5" y="46" width="3.4" height="27.5" rx="1"/><rect x="114.5" y="79" width="3.4" height="2.6" rx="1"/><rect x="114.5" y="87" width="3.4" height="13.5" rx="1"/><rect x="137.1" y="46" width="3.4" height="27.5" rx="1"/><rect x="137.1" y="79" width="3.4" height="2.6" rx="1"/><rect x="137.1" y="87" width="3.4" height="13.5" rx="1"/><rect x="100.5" y="51" width="8.5" height="5.6" rx="1.6"/><rect x="102.5" y="63" width="4" height="25" rx="1"/><rect x="102.5" y="92" width="4" height="12.5" rx="1"/><rect x="146" y="51" width="8.5" height="5.6" rx="1.6"/><rect x="148.5" y="63" width="4" height="25" rx="1"/><rect x="148.5" y="92" width="4" height="12.5" rx="1"/><rect x="92.3" y="71" width="3.6" height="37.5" rx="1"/><rect x="159.1" y="71" width="3.6" height="37.5" rx="1"/><rect x="81.5" y="83" width="4" height="29.5" rx="1"/><rect x="169.5" y="83" width="4" height="29.5" rx="1"/><rect x="70.5" y="93" width="4" height="3.6" rx="1"/><rect x="70.5" y="101" width="4" height="15.5" rx="1"/><rect x="180.5" y="93" width="4" height="3.6" rx="1"/><rect x="180.5" y="101" width="4" height="15.5" rx="1"/><path d="M127.5 101.5 L181.5 121.3 L181.5 124 L127.5 173.5 L73.5 124 L73.5 121.3 Z"/>'
+)
+
+
+def _icono_globalaize(fondo: str, trazo: str) -> str:
+    """La marca sobre un cuadrado redondeado, como los demás íconos (el favicon del sitio usa un círculo)."""
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs>'
+        '<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#123466"/>'
+        '<stop offset="1" stop-color="#051e45"/></linearGradient></defs>'
+        f'<rect width="100" height="100" rx="18" fill="{fondo}"/>'
+        f'<svg x="22" y="14" width="56" height="73" viewBox="68 20 119 156" fill="{trazo}">'
+        f'{MARCA_GLOBALAIZE}</svg></svg>'
+    )
+
+
 ICONOS = {
     "github.png": _github(),
     "linkedin.png": (
@@ -39,14 +60,10 @@ ICONOS = {
         '<text x="50" y="74" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" '
         'font-size="62" fill="#FFFFFF">in</text></svg>'
     ),
-    "globalaize.png": (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs>'
-        '<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#163A6B"/>'
-        '<stop offset="1" stop-color="#081E40"/></linearGradient></defs>'
-        '<circle cx="50" cy="50" r="50" fill="url(#g)"/>'
-        '<text x="50" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" '
-        'font-size="58" fill="#FFFFFF">G</text></svg>'
-    ),
+    # El ícono de GlobalAIze: la marca en blanco sobre el degradé azul marino del sitio, y la
+    # variante clara (marca en azul sobre blanco) para las superficies oscuras del deck
+    "globalaize.png": _icono_globalaize("url(#g)", "#FFFFFF"),
+    "globalaize_claro.png": _icono_globalaize("#FFFFFF", "#051e45"),
     "bitcoin.png": (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
         '<circle cx="50" cy="50" r="48" fill="#F7931A"/><circle cx="50" cy="50" r="42" fill="none" '
@@ -72,27 +89,10 @@ def _tecnologias() -> dict[str, str]:
     }
 
 
-def _logo_redondeado() -> None:
-    """El logo de GlobalAIze con las esquinas redondeadas, como los íconos de LinkedIn, para la fila de links."""
-    from PIL import Image, ImageDraw
-
-    origen = DESTINO / "globalaize_logo.png"
-    if not origen.exists():
-        return
-    with Image.open(origen) as im:
-        logo = im.convert("RGBA").resize((LADO, LADO), Image.LANCZOS)
-    mascara = Image.new("L", (LADO, LADO), 0)
-    ImageDraw.Draw(mascara).rounded_rectangle((0, 0, LADO - 1, LADO - 1), radius=int(LADO * 0.18), fill=255)
-    logo.putalpha(mascara)
-    logo.save(DESTINO / "globalaize_logo_redondeado.png")
-    print("globalaize_logo_redondeado.png")
-
-
 def main() -> None:
     from playwright.sync_api import sync_playwright
 
     DESTINO.mkdir(parents=True, exist_ok=True)
-    _logo_redondeado()
     with sync_playwright() as p:
         navegador = p.chromium.launch()
         try:
