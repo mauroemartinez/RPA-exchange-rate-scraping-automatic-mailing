@@ -22,13 +22,17 @@ workers_dev = false   # sin URL pública: el Worker solo corre por horario
 # Los días van con nombre: en Cloudflare el 1 es el DOMINGO, no el lunes como en el
 # cron clásico, y "1-5" corría de domingo a jueves (el viernes 16/10/2026 no hubo
 # disparo). MON-FRI no deja lugar a dudas.
-# La corrida se pide cada media hora de 16:00 a 19:30 (ocho órdenes por día): la
-# primera que encuentra el día hecho termina como omitida en un minuto, así que un
-# arreglo o una fuente que vuelve se aprovechan a la media hora y no a la hora siguiente
-# (el 16/11/2026, con DolarHoy caído a las 16:00, el reporte esperó hasta las 17:07).
+# Cuatro órdenes de corrida por día: la primera que encuentra el día hecho termina
+# como omitida en un minuto. El segundo intento va a la media hora y no a la hora
+# siguiente (el 16/11/2026, con DolarHoy caído a las 16:00, el reporte esperó hasta
+# las 17:07), y son cuatro y no ocho para que un día a medias no mande ocho alertas.
+# Minutos no redondos: así no coinciden con los picos de GitHub.
 crons = [
-  "0,30 19-22 * * MON-FRI",  # 16:00, 16:30, ... 19:30 en Argentina, lunes a viernes: la corrida
-  "43 22 * * MON-FRI",       # 19:43: el control, avisa si el día hábil quedó sin fila
+  "3 19 * * MON-FRI",    # 16:03 en Argentina, lunes a viernes: la corrida
+  "37 19 * * MON-FRI",   # 16:37: primer reintento (termina como omitida si el día ya salió)
+  "37 20 * * MON-FRI",   # 17:37: segundo reintento
+  "33 22 * * MON-FRI",   # 19:33: último reintento
+  "43 22 * * MON-FRI",   # 19:43: el control, avisa si el día hábil quedó sin fila
 ]
 
 [vars]
