@@ -9,10 +9,10 @@
  * dependen de ninguna máquina propia.
  *
  * QUÉ HACE: en cada horario de wrangler.toml, un POST a la API de GitHub con la
- * orden. Tres de los horarios piden la corrida en modo real (la misma corrida,
- * sin --forzar: si el día ya salió, encuentra la fila y termina como omitida sin
- * mandar nada; los feriados los saltea sola). El último pide el control, que
- * avisa por mail si el día hábil quedó sin fila.
+ * orden. El horario de cada media hora pide la corrida en modo real (la misma
+ * corrida, sin --forzar: si el día ya salió, encuentra la fila y termina como
+ * omitida sin mandar nada; los feriados los saltea sola). El de las 19:43 pide el
+ * control, que avisa por mail si el día hábil quedó sin fila.
  *
  * Si GitHub no responde, reintenta dos veces con 30 s de espera. Si aun así no
  * se pudo, la invocación termina con error y queda marcada así en el panel de
