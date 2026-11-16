@@ -23,7 +23,7 @@
 # omitida sin mandar nada; si una corrida anterior murió después de guardar la
 # fila, frena con error y manda la alerta en vez de repetir el mail; y si dos
 # coinciden, la segunda espera a la primera (concurrency, más abajo) y el
-# candado de Postgres impide que se pisen. El control de las 19:43 avisa si
+# candado de Postgres impide que se pisen. El control de las 21:12 avisa si
 # después de los tres la fila del día sigue sin estar.
 #
 # El repo es público, así que el log de cada corrida también lo es. GitHub tapa

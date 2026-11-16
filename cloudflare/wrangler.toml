@@ -32,14 +32,16 @@ crons = [
   "37 19 * * MON-FRI",   # 16:37: primer reintento (termina como omitida si el día ya salió)
   "37 20 * * MON-FRI",   # 17:37: segundo reintento
   "33 22 * * MON-FRI",   # 19:33: último reintento
-  "43 22 * * MON-FRI",   # 19:43: el control, avisa si el día hábil quedó sin fila
+  # El control a las 21:12 de Argentina: en UTC ya es el día siguiente (00:12), por eso
+  # va de martes a sábado. El script mira la fecha de Argentina, que sigue siendo la del día
+  "12 0 * * TUE-SAT",    # 21:12: el control, avisa si el día hábil quedó sin fila
 ]
 
 [vars]
 REPO = "mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing"
 RAMA = "main"
 # El horario que dispara el control en vez de la corrida: tiene que ser uno de los de arriba
-CRON_CONTROL = "43 22 * * MON-FRI"
+CRON_CONTROL = "12 0 * * TUE-SAT"
 
 [observability]
 # Los logs de cada invocación quedan en el panel de Cloudflare (Workers > el Worker > Logs)

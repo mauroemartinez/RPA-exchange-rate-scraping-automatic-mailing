@@ -3,9 +3,9 @@
 # pipeline no pueden ver. Cuando falla, GitHub le avisa por mail al dueño del
 # repo: un canal que no depende de la contraseña de Gmail del reporte.
 #
-# Desde el 14/10/2026 lo pide el Worker de Cloudflare de cloudflare/ a las 19:43
-# de Argentina, con la alerta prendida (alertar=true), después del último de los
-# tres intentos de la corrida (16:00, 17:07 y 19:12): si a esa hora la fila del
+# Desde el 14/10/2026 lo pide el Worker de Cloudflare de cloudflare/ (a las 21:12
+# de Argentina desde el 16/11/2026), con la alerta prendida (alertar=true), después
+# del último de los cuatro intentos de la corrida (16:03, 16:37, 17:37 y 19:33): si a esa hora la fila del
 # día no está, ninguno salió. El horario de abajo corre SIEMPRE, sin depender de
 # CORRIDA_AUTOMATICA: cubre al Worker caído o su token vencido, cuando ninguna orden
 # entra, ni la del control. No cubre todo: el 05/11/2026 un cambio de permisos de
@@ -25,7 +25,7 @@ on:
         type: boolean
         default: false
   schedule:
-    - cron: "43 22 * * 1-5"   # 19:43 en Argentina (UTC-3), de lunes a viernes
+    - cron: "12 0 * * 2-6"    # 21:12 en Argentina (UTC-3): 00:12 UTC del día siguiente, martes a sábado
 
 permissions:
   contents: read

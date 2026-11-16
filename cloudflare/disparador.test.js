@@ -4,7 +4,7 @@ import { test } from "node:test";
 
 import worker from "./disparador.js";
 
-const env = { REPO: "alguien/repo", RAMA: "main", CRON_CONTROL: "43 22 * * MON-FRI", GITHUB_TOKEN: "token-de-prueba" };
+const env = { REPO: "alguien/repo", RAMA: "main", CRON_CONTROL: "12 0 * * TUE-SAT", GITHUB_TOKEN: "token-de-prueba" };
 
 function conRespuestas(...estados) {
   const pedidos = [];
