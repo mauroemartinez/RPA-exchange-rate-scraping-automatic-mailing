@@ -1,11 +1,11 @@
 """Marca GlobalAIze para los gráficos y la presentación: colores, tipografías y el vidrio azul.
 
-Todo lo que viene de la marca está en reporte/recursos/marca/ (copia de globalaize-conocimiento/marca):
+Todo lo que viene de la marca está en reporte/recursos/marca/ (una copia del kit de marca de GlobalAIze):
   * vidrio.py: el fondo de luces y los paneles de vidrio, el mismo de los tableros de Power BI;
   * fuentes/: IBM Plex Sans y Newsreader en ttf (SIL Open Font License), para matplotlib y PowerPoint;
   * logos/: el isotipo y el logo horizontal sobre fondo oscuro.
 
-Reglas que se respetan (marca/README.md):
+Reglas de la marca que se respetan:
   * fondo #040F23 con luces solo cian y azul, panel de vidrio esmerilado, un solo nivel;
   * textos en tinta #F0EEE9, nunca del color de la serie;
   * series en el orden fijo cian, violeta, oliva, azul, rojo, verde azulado, magenta, verde; sin naranja;

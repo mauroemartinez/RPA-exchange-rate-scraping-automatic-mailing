@@ -6,7 +6,7 @@ helpers de datos). Lo que cambia es todo lo visual:
 
   * cada diapositiva es una imagen de fondo con las luces de la marca y un panel de vidrio
     en el lugar de cada tarjeta (vidrio.py, como en los tableros de Power BI); los gráficos
-    y los textos van encima, sin relleno, como dice el README de la marca;
+    y los textos van encima, sin relleno, como piden las reglas de la marca;
   * los cinco gráficos nativos siguen siendo editables, ahora con la paleta de la marca;
   * títulos en Newsreader y textos en IBM Plex Sans: hay que tener instaladas las fuentes
     (se dejan en prueba_marca/fuentes/), PowerPoint no las incrusta;
