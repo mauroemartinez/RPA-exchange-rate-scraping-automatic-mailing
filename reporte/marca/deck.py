@@ -26,13 +26,14 @@ from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Emu, Pt
 
 from reporte import charts, email_report, ia_generator, indicadores, presentacion, transformations
-from reporte.marca import estilo, graficos, nativos
+from reporte.marca import animaciones, estilo, graficos, nativos
 
 log = logging.getLogger(__name__)
 
 PX = 9525  # EMU por píxel: el lienzo es de 1280 x 720, 96 px por pulgada
 ANCHO, ALTO = 1280, 720
 ARCHIVO = presentacion.ARCHIVO
+ANIMAR = True  # transición entre diapositivas y entrada animada de gráficos y textos
 NOMBRE_FONDO, NOMBRE_ISOTIPO = "Fondo de vidrio", "Isotipo GlobalAIze"
 
 
@@ -42,7 +43,6 @@ def _rgb(hexa: str) -> RGBColor:
 
 TINTA, SECUNDARIO, TENUE = _rgb(estilo.TINTA), _rgb(estilo.SECUNDARIO), _rgb(estilo.TENUE)
 CIAN, BUENO, MALO = _rgb(estilo.CIAN), _rgb(estilo.BUENO), _rgb(estilo.MALO)
-CHIP = _rgb("F0EEE9")  # el fondo claro donde van los íconos de colores: sobre el vidrio oscuro algunos se perderían
 
 
 def _e(valor: float) -> Emu:
@@ -55,6 +55,7 @@ class Diapositiva:
     def __init__(self, prs: Presentation):
         self.slide = prs.slides.add_slide(prs.slide_layouts[6])
         self.paneles: list[tuple[float, float, float, float]] = []
+        self.animables: list[tuple] = []  # (forma, "fade" | "wipe"), en el orden en que entran
 
     def panel(self, x, y, ancho, alto):
         self.paneles.append((x, y, ancho, alto))
@@ -71,10 +72,13 @@ class Diapositiva:
         arbol = self.slide.shapes._spTree
         arbol.remove(imagen._element)
         arbol.insert(2, imagen._element)  # después de nvGrpSpPr y grpSpPr: primero en el orden de dibujo
+        if ANIMAR:
+            animaciones.transicion(self.slide)
+            animaciones.entradas(self.slide, self.animables)
 
     # ── texto ────────────────────────────────────────────────────────────────
     def texto(self, x, y, ancho, alto, texto, tamanio=14, color=TINTA, fuente=estilo.PPT_TEXTO, alinear=PP_ALIGN.LEFT,
-              ancla=MSO_ANCHOR.TOP, link: str | None = None, espaciado: float | None = None):
+              ancla=MSO_ANCHOR.TOP, link: str | None = None, espaciado: float | None = None, animar: str | None = None):
         caja = self.slide.shapes.add_textbox(_e(x), _e(y), _e(ancho), _e(alto))
         marco = caja.text_frame
         marco.word_wrap = True
@@ -90,6 +94,8 @@ class Diapositiva:
                 run.font._element.set("spc", str(int(espaciado * 100)))
         if link:
             caja.click_action.hyperlink.address = link
+        if animar:
+            self.animables.append((caja, animar))
         return caja
 
     def bloques(self, x, y, ancho, alto, bloques, maximo: int = 16, minimo: int = 10, color=SECUNDARIO, tamanio: int | None = None):
@@ -121,9 +127,10 @@ class Diapositiva:
                 run = p.add_run()
                 run.text = linea
                 run.font.size, run.font.name, run.font.color.rgb = Pt(tamanio), estilo.PPT_TEXTO, color
+        self.animables.append((caja, "fade"))
         return caja
 
-    def imagen(self, origen, x, y, ancho, alto, margen: float = 12):
+    def imagen(self, origen, x, y, ancho, alto, margen: float = 12, animar: str | None = "wipe"):
         """La imagen lo más grande posible dentro de la caja, centrada y sin deformarla."""
         enmemoria = isinstance(origen, io.BytesIO)
         with Image.open(origen) as im:
@@ -132,22 +139,19 @@ class Diapositiva:
             origen.seek(0)
         escala = min((ancho - 2 * margen) / w, (alto - 2 * margen) / h)
         iw, ih = w * escala, h * escala
-        return self.slide.shapes.add_picture(origen if enmemoria else str(origen), _e(x + (ancho - iw) / 2), _e(y + (alto - ih) / 2),
-                                             _e(iw), _e(ih))
+        imagen = self.slide.shapes.add_picture(origen if enmemoria else str(origen), _e(x + (ancho - iw) / 2),
+                                               _e(y + (alto - ih) / 2), _e(iw), _e(ih))
+        if animar:
+            self.animables.append((imagen, animar))
+        return imagen
 
-    def chip(self, archivo: Path, x, y, lado, link: str | None = None):
-        """Un ícono de colores sobre un cuadradito claro de esquinas redondeadas."""
-        forma = self.slide.shapes.add_shape(5, _e(x), _e(y), _e(lado), _e(lado))
-        forma.adjustments[0] = 0.22
-        forma.fill.solid()
-        forma.fill.fore_color.rgb = CHIP
-        forma.line.fill.background()
-        forma.shadow.inherit = False
-        relleno = lado * 0.2
-        icono = self.slide.shapes.add_picture(str(archivo), _e(x + relleno), _e(y + relleno), _e(lado - 2 * relleno), _e(lado - 2 * relleno))
+    def icono(self, archivo: Path, x, y, lado, link: str | None = None):
+        """El ícono monocromo (en la tinta de la marca) directo sobre el vidrio, sin cuadradito detrás."""
+        ruta = presentacion.RECURSOS / "mono" / Path(archivo).name
+        imagen = self.slide.shapes.add_picture(str(ruta), _e(x), _e(y), _e(lado), _e(lado))
         if link:
-            forma.click_action.hyperlink.address = link
-            icono.click_action.hyperlink.address = link
+            imagen.click_action.hyperlink.address = link
+        return imagen
 
     def linea(self, x, y, ancho, color=CIAN, grosor: float = 2.5):
         """Un trazo fino de acento (una regla corta bajo un rótulo)."""
@@ -169,6 +173,7 @@ class Diapositiva:
             antes = len(self.slide.shapes)
             try:
                 dibujar(self.slide, *(_e(v) for v in caja))
+                self.animables.extend((f, "wipe") for f in list(self.slide.shapes)[antes:] if f.has_chart)
                 return
             except Exception:
                 log.exception("No se pudo armar un gráfico nativo; va la imagen")
@@ -231,7 +236,7 @@ def _kpi(d: Diapositiva, x, y, ancho, alto, titulo: str, valor: str, detalle: st
     d.panel(x, y, ancho, alto)
     d.texto(x + 26, y + 22, ancho - 52, 18, titulo.upper(), 11.5, SECUNDARIO, estilo.PPT_TEXTO_NEGRITA, espaciado=1)
     d.linea(x + 26, y + 46, 34)
-    d.texto(x + 26, y + 62, ancho - 52, 60, valor, 40, TINTA, estilo.PPT_TITULO)
+    d.texto(x + 26, y + 58, ancho - 52, 64, valor, 46, TINTA, estilo.PPT_TEXTO_LIGERO, animar="fade")
     d.texto(x + 26, y + alto - 44, ancho - 52, 24, detalle, 13, color, estilo.PPT_TEXTO_MEDIO)
 
 
@@ -297,15 +302,15 @@ def armar(df, imagenes: dict[str, Path], salida: Path, parrafo: str | None = Non
     inicio = (ANCHO - sep * len(enlaces)) / 2
     for i, (icono, rotulo, url) in enumerate(enlaces):
         izq = inicio + i * sep
-        p.chip(presentacion.RECURSOS / icono, izq + (sep - lado) / 2, 448, lado, url)
+        p.icono(icono, izq + (sep - lado) / 2, 448, lado, url)
         p.texto(izq, 496, sep, 16, rotulo, 10.5, SECUNDARIO, alinear=PP_ALIGN.CENTER, link=url)
     p.linea(140, 548, 1000, _rgb("2A394D"), 1)
     p.texto(48, 560, 1184, 16, "STACK", 9.5, TENUE, estilo.PPT_TEXTO_NEGRITA, espaciado=2, **centro)
-    cada, chip = 70, 32
+    cada, lado_tec = 70, 34
     inicio = (ANCHO - cada * len(presentacion.TECNOLOGIAS)) / 2
     for i, (archivo, rotulo) in enumerate(presentacion.TECNOLOGIAS):
         izq = inicio + i * cada
-        p.chip(presentacion.RECURSOS / "tecnologias" / f"{archivo}.png", izq + (cada - chip) / 2, 584, chip)
+        p.icono(f"{archivo}.png", izq + (cada - lado_tec) / 2, 582, lado_tec)
         p.texto(izq - 4, 622, cada + 8, 14, rotulo, 8.5, SECUNDARIO, alinear=PP_ALIGN.CENTER)
     p.cerrar()
 
@@ -432,7 +437,7 @@ def armar(df, imagenes: dict[str, Path], salida: Path, parrafo: str | None = Non
     lado, sep = 42, 92
     for i, (icono, rotulo, url) in enumerate(presentacion.LINKS):
         izq = 850 + i * sep
-        d.chip(presentacion.RECURSOS / icono, izq + (sep - lado) / 2, 240, lado, url)
+        d.icono(icono, izq + (sep - lado) / 2, 240, lado, url)
         d.texto(izq, 288, sep, 30, rotulo, 9.5, SECUNDARIO, alinear=PP_ALIGN.CENTER, link=url)
     d.texto(858, 372, 370, 70, f"¿Te sirvió el reporte? Podés apoyar el proyecto al alias {presentacion.ALIAS}", 14, TINTA, estilo.PPT_TEXTO_MEDIO)
     d.texto(858, 470, 370, 70, f"Consultas, desuscripciones o propuestas:\n{presentacion.MAIL}", 13, SECUNDARIO, link=f"mailto:{presentacion.MAIL}")

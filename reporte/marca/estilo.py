@@ -38,7 +38,8 @@ ROJO, VERDE_AZULADO, MAGENTA, VERDE = "#C13234", "#3BAB8D", "#B33879", "#47AB4F"
 SERIES = [CIAN, VIOLETA, OLIVA, AZUL, ROJO, VERDE_AZULADO, MAGENTA, VERDE]
 
 # Estados: solo para subas, bajas y alertas
-BUENO, MALO, NEUTRO = "#62D286", "#EF6661", "#D8C65A"
+# Estados, en pastel (20/11/2026): subas, bajas y alertas, más tranquilos sobre el vidrio. Antes #62D286 y #EF6661
+BUENO, MALO, NEUTRO = "#8FCFA8", "#E89A96", "#D8C65A"
 
 # ── Tipografías ──────────────────────────────────────────────────────────────
 # Matplotlib no lee woff2: se convierten a ttf una vez (ver preparar_fuentes).
@@ -47,6 +48,7 @@ TEXTO = ["IBM Plex Sans", "DejaVu Sans"]
 TITULO = ["Newsreader Medium", "DejaVu Serif"]
 # Nombres de familia tal como los ve PowerPoint una vez instaladas las fuentes
 PPT_TEXTO = "IBM Plex Sans"
+PPT_TEXTO_LIGERO = "IBM Plex Sans Light"  # las cifras grandes: finas, con los dígitos de ancho fijo de Plex
 PPT_TEXTO_MEDIO = "IBM Plex Sans Medium"
 PPT_TEXTO_NEGRITA = "IBM Plex Sans SemiBold"
 PPT_TITULO = "Newsreader"

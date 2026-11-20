@@ -284,3 +284,24 @@ def test_frases_de_inflacion_y_btc(historico):
     assert "Bitcoin cerró en USD 366 el 08/10/2026" in presentacion.frase_btc(btc)
     assert "el último año" in presentacion.frase_btc(btc)
     assert presentacion.frase_btc(None) is None and presentacion.frase_inflacion(None, historico) is None
+
+
+def test_las_diapositivas_llevan_transicion_y_entradas_animadas(historico, imagenes, tmp_path):
+    from reporte.marca import animaciones
+
+    prs = Presentation(presentacion.armar(historico, imagenes, tmp_path, inflacion=_inflacion()))
+    for slide in prs.slides:
+        assert slide._element.xpath("p:transition/p:fade")  # fundido entre diapositivas
+    cambio = prs.slides[2]
+    destinos = {int(e) for e in cambio._element.xpath("p:timing//p:animEffect/p:cBhvr/p:tgtEl/p:spTgt/@spid")}
+    ids = {s.shape_id for s in cambio.shapes}
+    assert destinos and destinos <= ids  # cada efecto apunta a una forma que existe
+    graficos = {s.shape_id for s in cambio.shapes if s.has_chart}
+    assert graficos <= destinos  # los gráficos entran con barrido
+    assert animaciones.entradas(cambio, []) == 0
+
+
+def test_los_iconos_son_monocromos_y_estan_todos():
+    mono = presentacion.RECURSOS / "mono"
+    esperados = {Path(icono).name for icono, _, _ in presentacion.LINKS} | {f"{t}.png" for t, _ in presentacion.TECNOLOGIAS}
+    assert esperados <= {p.name for p in mono.glob("*.png")}
