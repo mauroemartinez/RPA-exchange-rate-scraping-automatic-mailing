@@ -10,6 +10,12 @@ from pptx import Presentation
 import presentacion_ejecutiva
 from conftest import jpeg_minimo
 from reporte import charts, indicadores, presentacion
+from reporte.marca import deck, nativos
+
+
+def _imagenes(slide) -> list:
+    """Las imágenes de una diapositiva sin el fondo de vidrio ni el isotipo del encabezado, que están en todas."""
+    return [s for s in slide.shapes if s.shape_type == 13 and s.name not in (deck.NOMBRE_FONDO, deck.NOMBRE_ISOTIPO)]
 
 
 def _textos(slide) -> str:
@@ -92,20 +98,18 @@ def test_los_graficos_simples_son_nativos(historico, imagenes, tmp_path):
     assert combinado._chartSpace.xpath('.//c:valAx/c:axPos[@val="r"]')
     assert len(acumuladas.plots[0].series) == 3
     # Los gráficos nativos reemplazan a las imágenes del mail en esas diapositivas
-    assert not any(s.shape_type == 13 for slide in (cambio, riesgo, inflacion) for s in slide.shapes)
+    assert not any(_imagenes(slide) for slide in (cambio, riesgo, inflacion))
 
 
 def test_si_un_grafico_nativo_falla_va_la_imagen_del_mail(historico, imagenes, tmp_path, monkeypatch):
-    from reporte import graficos_pptx
-
     def a_medio_armar(slide, x, y, ancho, alto, df):
-        graficos_pptx.paralelas(slide, x, y, ancho, alto, df)  # deja un gráfico entero en la diapositiva...
+        nativos.paralelas(slide, x, y, ancho, alto, df)  # deja un gráfico entero en la diapositiva...
         raise ValueError("...y falla después")
 
-    monkeypatch.setattr(graficos_pptx, "riesgo_pais", a_medio_armar)
+    monkeypatch.setattr(nativos, "riesgo_pais", a_medio_armar)
     ruta = presentacion.armar(historico, imagenes, tmp_path)
     riesgo = Presentation(ruta).slides[3]
-    assert not _graficos(riesgo) and any(s.shape_type == 13 for s in riesgo.shapes)
+    assert not _graficos(riesgo) and len(_imagenes(riesgo)) == 1
     # El gráfico que quedó a medias no viaja en el archivo
     with zipfile.ZipFile(ruta) as pptx:
         partes = [n for n in pptx.namelist() if n.startswith("ppt/charts/chart")]
@@ -119,7 +123,7 @@ def test_si_un_grafico_nativo_falla_va_la_imagen_del_mail(historico, imagenes, t
 def test_sin_la_serie_de_inflacion_van_las_imagenes(historico, imagenes, tmp_path):
     """El script manual no baja la inflación: esa diapositiva lleva las imágenes de Previews/."""
     inflacion = Presentation(presentacion.armar(historico, imagenes, tmp_path)).slides[4]
-    assert not _graficos(inflacion) and sum(s.shape_type == 13 for s in inflacion.shapes) == 2
+    assert not _graficos(inflacion) and len(_imagenes(inflacion)) == 2
 
 
 def test_los_vacios_van_como_celdas_vacias():
@@ -225,7 +229,7 @@ def test_si_el_guardado_falla_queda_la_version_anterior(historico, imagenes, tmp
         Path(destino).write_bytes(b"a medio escribir")
         raise OSError("disco lleno")
 
-    monkeypatch.setattr(presentacion.Presentation().__class__, "save", falla)
+    monkeypatch.setattr(Presentation().__class__, "save", falla)
     with pytest.raises(OSError):
         presentacion.armar(historico, imagenes, tmp_path)
 
@@ -250,15 +254,20 @@ def test_cierre_con_fuentes_y_alias(historico, imagenes, tmp_path):
 
 def test_subir_es_rojo_y_bajar_verde():
     """Desde la macro, que el dólar baje es la buena noticia."""
-    assert presentacion._variacion(110, 100)[1] == presentacion.ROJO
-    assert presentacion._variacion(90, 100)[1] == presentacion.VERDE
+    assert deck._variacion(110, 100)[1] == deck.MALO and deck._variacion(110, 100)[0].startswith("▲")
+    assert deck._variacion(90, 100)[1] == deck.BUENO and deck._variacion(90, 100)[0].startswith("▼")
 
 
-def test_bitcoin_en_negro_con_su_moneda(historico, imagenes, tmp_path):
-    prs = Presentation(presentacion.armar(historico, imagenes, tmp_path))
-    bitcoin = prs.slides[7]
-    assert bitcoin.background.fill.fore_color.rgb == presentacion.NEGRO
-    assert any(s.shape_type == 13 for s in bitcoin.shapes)  # 13 = imagen: la moneda del título
+def test_bitcoin_lleva_su_grafico_de_siempre(historico, imagenes, tmp_path):
+    bitcoin = Presentation(presentacion.armar(historico, imagenes, tmp_path)).slides[7]
+    assert "Bitcoin" in _textos(bitcoin)
+    assert len(_imagenes(bitcoin)) == 1  # la imagen del mail, que conserva su estética propia
+
+
+def test_cada_diapositiva_lleva_su_fondo_de_vidrio(historico, imagenes, tmp_path):
+    for slide in Presentation(presentacion.armar(historico, imagenes, tmp_path)).slides:
+        primero = next(iter(slide.shapes))
+        assert primero.name == deck.NOMBRE_FONDO  # detrás de todo lo demás
 
 
 def test_frases_de_inflacion_y_btc(historico):

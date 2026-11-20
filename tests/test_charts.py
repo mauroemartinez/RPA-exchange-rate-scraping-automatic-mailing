@@ -47,11 +47,9 @@ def test_los_cuatro_graficos_se_generan(df, inflacion_12, btc_crudo, tmp_path):
     ]
     assert [r.name for r in rutas] == [charts.TIPOS_DE_CAMBIO, charts.RIESGO_PAIS, charts.VARIACIONES, charts.INFLACION, charts.BTC]
 
-    tamanios = {r.name: Image.open(r).size for r in rutas}
-    assert tamanios[charts.TIPOS_DE_CAMBIO] == (1000, 950)
-    assert tamanios[charts.RIESGO_PAIS] == (1000, 500)
-    assert tamanios[charts.VARIACIONES] == (1000, 500)
-    assert tamanios[charts.INFLACION] == (1000, 700)
+    # Los cuatro de marca salen sobre vidrio, al mismo ancho; BTC conserva su estética y su tamaño
+    anchos = {r.name: Image.open(r).size[0] for r in rutas}
+    assert {anchos[n] for n in (charts.TIPOS_DE_CAMBIO, charts.RIESGO_PAIS, charts.VARIACIONES, charts.INFLACION)} == {1400}
     assert all(Image.open(r).format == "JPEG" for r in rutas)
 
 
