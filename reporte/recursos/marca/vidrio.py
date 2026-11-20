@@ -23,7 +23,9 @@ import argparse
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 K = 2                                  # escala de dibujo
-TINTE = 0.58                           # cuánto del azul de la marca cubre la luz de atrás: más tinte, panel más oscuro hacia el centro
+TINTE = 0.70                           # cuánto del azul de la marca cubre la luz de atrás: más tinte, panel más oscuro hacia el centro
+BRILLO = 0.0                           # reflejos del panel (velo blanco de arriba, franja diagonal, resplandor interno): 0 = mate, 1 = como el original
+CANTO = 0.55                           # intensidad del borde de luz, 1 = como el original
 LUCES_FUERZA = 0.24                    # intensidad de las luces del fondo (0 = azul liso, 1 = luces a pleno): menos, degradé más suave
 PAGINA = (4, 15, 35)                   # #040F23
 MARCA = (5, 30, 69)                    # #051E45, tinte del esmerilado
@@ -56,7 +58,7 @@ def _canto(W, H, r, grosor, k):
     g = Image.linear_gradient('L').resize((W, H))
     gx = Image.linear_gradient('L').rotate(90, expand=True).resize((W, H)).transpose(Image.FLIP_LEFT_RIGHT)
     diag = ImageChops.add(g, gx, scale=2.0)
-    picos = diag.point(lambda v: round(45 + 95 * (abs(v - 127.5) / 127.5) ** 1.3))
+    picos = diag.point(lambda v: round(CANTO * (45 + 95 * (abs(v - 127.5) / 127.5) ** 1.3)))
     return ImageChops.multiply(aro, picos)
 
 
@@ -69,17 +71,17 @@ def panel(fondo, luz, x, y, w, h, r=14, k=K):
     fondo = Image.composite(Image.new('RGB', fondo.size, (1, 6, 16)), fondo, sombra)
     detras = luz.crop((X, Y, X + W, Y + H)).filter(ImageFilter.GaussianBlur(36 * k))
     vidrio = Image.blend(detras, Image.new('RGB', (W, H), MARCA), TINTE)
-    vidrio = Image.blend(vidrio, Image.new('RGB', (W, H), (255, 255, 255)), 0.04).convert('RGBA')
+    vidrio = Image.blend(vidrio, Image.new('RGB', (W, H), (255, 255, 255)), 0.04 * BRILLO).convert('RGBA')
     velo = Image.new('L', (W, H), 0)
     dv = ImageDraw.Draw(velo)
     for yy in range(min(H, 50 * k)):
-        dv.line((0, yy, W, yy), fill=round(10 * (1 - yy / (50 * k)) ** 2))
+        dv.line((0, yy, W, yy), fill=round(10 * BRILLO * (1 - yy / (50 * k)) ** 2))
     a = min(W, 700 * k)
-    dv.polygon([(a * .08, 0), (a * .30, 0), (a * .14, H), (-a * .08, H)], fill=7)
+    dv.polygon([(a * .08, 0), (a * .30, 0), (a * .14, H), (-a * .08, H)], fill=round(7 * BRILLO))
     velo = velo.filter(ImageFilter.GaussianBlur(14 * k))
     vidrio = Image.composite(Image.new('RGBA', (W, H), (255, 255, 255, 255)), vidrio, velo)
     interno = Image.new('L', (W, H), 0)
-    ImageDraw.Draw(interno).rounded_rectangle((0, 0, W - 1, H - 1), R, outline=30, width=8 * k)
+    ImageDraw.Draw(interno).rounded_rectangle((0, 0, W - 1, H - 1), R, outline=round(30 * BRILLO), width=8 * k)
     interno = interno.filter(ImageFilter.GaussianBlur(7 * k))
     vidrio = Image.composite(Image.new('RGBA', (W, H), (170, 215, 255, 255)), vidrio, interno)
     vidrio = Image.composite(Image.new('RGBA', (W, H), (235, 245, 255, 255)), vidrio, _canto(W, H, R, round(1.5 * k), k))

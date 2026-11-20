@@ -146,8 +146,8 @@ class Diapositiva:
         return imagen
 
     def icono(self, archivo: Path, x, y, lado, link: str | None = None):
-        """El ícono monocromo (en la tinta de la marca) directo sobre el vidrio, sin cuadradito detrás."""
-        ruta = presentacion.RECURSOS / "mono" / Path(archivo).name
+        """El ícono con sus colores directo sobre el vidrio, sin cuadradito detrás (los muy oscuros ya vienen aclarados)."""
+        ruta = presentacion.RECURSOS / "oscuro" / Path(archivo).name
         imagen = self.slide.shapes.add_picture(str(ruta), _e(x), _e(y), _e(lado), _e(lado))
         if link:
             imagen.click_action.hyperlink.address = link
@@ -235,8 +235,7 @@ def _variacion(hoy: float, ayer: float, decimales: int = 2) -> tuple[str, RGBCol
 def _kpi(d: Diapositiva, x, y, ancho, alto, titulo: str, valor: str, detalle: str, color) -> None:
     d.panel(x, y, ancho, alto)
     d.texto(x + 26, y + 22, ancho - 52, 18, titulo.upper(), 11.5, SECUNDARIO, estilo.PPT_TEXTO_NEGRITA, espaciado=1)
-    d.linea(x + 26, y + 46, 34)
-    d.texto(x + 26, y + 58, ancho - 52, 64, valor, 46, TINTA, estilo.PPT_TEXTO_LIGERO, animar="fade")
+    d.texto(x + 26, y + 52, ancho - 52, 64, valor, 40, TINTA, estilo.PPT_TEXTO_MEDIO, animar="fade")
     d.texto(x + 26, y + alto - 44, ancho - 52, 24, detalle, 13, color, estilo.PPT_TEXTO_MEDIO)
 
 
@@ -298,19 +297,19 @@ def armar(df, imagenes: dict[str, Path], salida: Path, parrafo: str | None = Non
     p.texto(48, 360, 1184, 36, f"{fecha:%d/%m/%Y}", 24, TINTA, estilo.PPT_TEXTO_MEDIO, **centro)
     p.texto(48, 400, 1184, 24, "por Mauro E. Martinez · GlobalAIze", 14, TENUE, **centro)
     enlaces = [e for e in presentacion.LINKS if e[1] != "GlobalAIze"]
-    lado, sep = 42, 170
+    lado, sep = 56, 170
     inicio = (ANCHO - sep * len(enlaces)) / 2
     for i, (icono, rotulo, url) in enumerate(enlaces):
         izq = inicio + i * sep
-        p.icono(icono, izq + (sep - lado) / 2, 448, lado, url)
-        p.texto(izq, 496, sep, 16, rotulo, 10.5, SECUNDARIO, alinear=PP_ALIGN.CENTER, link=url)
+        p.icono(icono, izq + (sep - lado) / 2, 440, lado, url)
+        p.texto(izq, 502, sep, 16, rotulo, 10.5, SECUNDARIO, alinear=PP_ALIGN.CENTER, link=url)
     p.linea(140, 548, 1000, _rgb("2A394D"), 1)
-    p.texto(48, 560, 1184, 16, "STACK", 9.5, TENUE, estilo.PPT_TEXTO_NEGRITA, espaciado=2, **centro)
-    cada, lado_tec = 70, 34
+    p.texto(48, 548, 1184, 16, "STACK", 9.5, TENUE, estilo.PPT_TEXTO_NEGRITA, espaciado=2, **centro)
+    cada, lado_tec = 70, 44
     inicio = (ANCHO - cada * len(presentacion.TECNOLOGIAS)) / 2
     for i, (archivo, rotulo) in enumerate(presentacion.TECNOLOGIAS):
         izq = inicio + i * cada
-        p.icono(f"{archivo}.png", izq + (cada - lado_tec) / 2, 582, lado_tec)
+        p.icono(f"{archivo}.png", izq + (cada - lado_tec) / 2, 578, lado_tec)
         p.texto(izq - 4, 622, cada + 8, 14, rotulo, 8.5, SECUNDARIO, alinear=PP_ALIGN.CENTER)
     p.cerrar()
 
@@ -434,10 +433,10 @@ def armar(df, imagenes: dict[str, Path], salida: Path, parrafo: str | None = Non
     d.panel(830, 92, 426, 592)
     d.texto(858, 116, 370, 18, "CONTACTO", 11.5, CIAN, estilo.PPT_TEXTO_NEGRITA, espaciado=1)
     d.texto(858, 148, 370, 64, "Reporte hecho íntegramente en Python por Mauro E. Martinez, de GlobalAIze.", 14, TINTA)
-    lado, sep = 42, 92
+    lado, sep = 52, 92
     for i, (icono, rotulo, url) in enumerate(presentacion.LINKS):
         izq = 850 + i * sep
-        d.icono(icono, izq + (sep - lado) / 2, 240, lado, url)
+        d.icono(icono, izq + (sep - lado) / 2, 236, lado, url)
         d.texto(izq, 288, sep, 30, rotulo, 9.5, SECUNDARIO, alinear=PP_ALIGN.CENTER, link=url)
     d.texto(858, 372, 370, 70, f"¿Te sirvió el reporte? Podés apoyar el proyecto al alias {presentacion.ALIAS}", 14, TINTA, estilo.PPT_TEXTO_MEDIO)
     d.texto(858, 470, 370, 70, f"Consultas, desuscripciones o propuestas:\n{presentacion.MAIL}", 13, SECUNDARIO, link=f"mailto:{presentacion.MAIL}")

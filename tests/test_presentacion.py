@@ -301,7 +301,7 @@ def test_las_diapositivas_llevan_transicion_y_entradas_animadas(historico, image
     assert animaciones.entradas(cambio, []) == 0
 
 
-def test_los_iconos_son_monocromos_y_estan_todos():
-    mono = presentacion.RECURSOS / "mono"
+def test_los_iconos_de_colores_estan_listos_para_el_vidrio():
+    mono = presentacion.RECURSOS / "oscuro"
     esperados = {Path(icono).name for icono, _, _ in presentacion.LINKS} | {f"{t}.png" for t, _ in presentacion.TECNOLOGIAS}
     assert esperados <= {p.name for p in mono.glob("*.png")}
