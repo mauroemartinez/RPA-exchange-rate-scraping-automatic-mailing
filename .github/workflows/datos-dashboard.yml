@@ -1,0 +1,52 @@
+# Copia diaria de los datos para el tablero publicado (dashboard/app.py).
+#
+# Lee Fact_Mercado_Macro en una transacción de solo lectura y la deja en
+# dashboard/data/mercado.csv. El tablero de Streamlit lee ese archivo: no necesita
+# credenciales y no dice dónde están los datos. Corre después de los intentos de la
+# corrida diaria, así toma el día ya cargado.
+name: Datos del tablero
+
+on:
+  schedule:
+    - cron: "45 22 * * 1-5"   # 19:45 en Argentina, después del último intento de la corrida
+  workflow_dispatch:
+
+permissions:
+  contents: write  # para el commit de dashboard/data/mercado.csv
+
+concurrency:
+  group: datos-dashboard
+  cancel-in-progress: false
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: dashboard/requirements.txt
+
+      - name: Dependencias
+        run: pip install -r dashboard/requirements.txt
+
+      - name: Exportar
+        run: python dashboard/exportar_datos.py
+
+      - name: Commit si cambió
+        run: |
+          git config user.name "${{ github.repository_owner }}"
+          git config user.email "${{ vars.EMAIL_COMMITS || format('{0}+{1}@users.noreply.github.com', github.repository_owner_id, github.repository_owner) }}"
+          if git diff --quiet -- dashboard/data/mercado.csv; then
+            echo "Sin cambios en los datos del tablero"
+            exit 0
+          fi
+          git add dashboard/data/mercado.csv
+          git commit -m "Dashboard data update" -- dashboard/data/mercado.csv
+          git push || { git pull --rebase --autostash && git push; }

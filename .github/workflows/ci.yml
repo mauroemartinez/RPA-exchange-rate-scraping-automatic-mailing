@@ -8,7 +8,7 @@ on:
   push:
     branches: [main]
     # Los commits automáticos de Previews/ no tocan código
-    paths-ignore: ["Previews/**"]
+    paths-ignore: ["Previews/**", "dashboard/data/**"]
   pull_request:
   workflow_dispatch:
 

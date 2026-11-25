@@ -1,0 +1,14 @@
+# Tema del tablero (dashboard/app.py) con los colores de la marca GlobalAIze.
+[theme]
+base = "dark"
+primaryColor = "#0DA4CF"
+backgroundColor = "#040F23"
+secondaryBackgroundColor = "#051E45"
+textColor = "#F0EEE9"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"

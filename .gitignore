@@ -25,7 +25,9 @@ Thumbs.db
 *.log
 
 # Secretos de Streamlit (dashboard/): llevarían la URL de la base al repo público
-.streamlit/
+# Los secretos de Streamlit nunca se suben; el tema del tablero sí.
+.streamlit/*
+!.streamlit/config.toml
 
 # Apuntes personales de estudio del código
 APUNTES.md
@@ -58,3 +60,6 @@ reporte/templates/informe_macro.html
 cloudflare/.wrangler/
 cloudflare/.dev.vars
 node_modules/
+
+# La copia diaria de los datos que lee el tablero publicado (la sube datos-dashboard.yml)
+!dashboard/data/mercado.csv

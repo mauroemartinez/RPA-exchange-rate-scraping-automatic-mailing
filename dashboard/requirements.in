@@ -8,6 +8,7 @@
 -c ../requirements-dev.txt   # y que desarrollo, para que el CI pueda instalar los dos juntos
 
 streamlit
+plotly
 pandas
 SQLAlchemy
 psycopg2-binary
