@@ -1,9 +1,10 @@
 # Copia diaria de los datos para el tablero publicado (dashboard/app.py).
 #
-# Lee Fact_Mercado_Macro en una transacción de solo lectura y la deja en
-# dashboard/data/mercado.csv. El tablero de Streamlit lee ese archivo: no necesita
-# credenciales y no dice dónde están los datos. Corre después de los intentos de la
-# corrida diaria, así toma el día ya cargado.
+# Lee Fact_Mercado_Macro y Fact_Series_Macro en una transacción de solo lectura, desde
+# el 1 de enero de hace dos años (la base completa no se publica), suma el bitcoin de
+# Yahoo Finance y deja dashboard/data/mercado.csv y series.csv. El tablero de Streamlit
+# lee esos archivos: no necesita credenciales y no dice dónde están los datos. Corre
+# después de los intentos de la corrida diaria, así toma el día ya cargado.
 name: Datos del tablero
 
 on:
@@ -12,7 +13,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # para el commit de dashboard/data/mercado.csv
+  contents: write  # para el commit de dashboard/data/*.csv
 
 concurrency:
   group: datos-dashboard
@@ -34,7 +35,7 @@ jobs:
           cache-dependency-path: dashboard/requirements.txt
 
       - name: Dependencias
-        run: pip install -r dashboard/requirements.txt
+        run: pip install -r dashboard/requirements.txt yfinance==1.4.0
 
       - name: Exportar
         run: python dashboard/exportar_datos.py
@@ -43,10 +44,10 @@ jobs:
         run: |
           git config user.name "${{ github.repository_owner }}"
           git config user.email "${{ vars.EMAIL_COMMITS || format('{0}+{1}@users.noreply.github.com', github.repository_owner_id, github.repository_owner) }}"
-          if git diff --quiet -- dashboard/data/mercado.csv; then
+          git add dashboard/data/mercado.csv dashboard/data/series.csv
+          if git diff --cached --quiet -- dashboard/data; then
             echo "Sin cambios en los datos del tablero"
             exit 0
           fi
-          git add dashboard/data/mercado.csv
-          git commit -m "Dashboard data update" -- dashboard/data/mercado.csv
+          git commit -m "Dashboard data update" -- dashboard/data/mercado.csv dashboard/data/series.csv
           git push || { git pull --rebase --autostash && git push; }

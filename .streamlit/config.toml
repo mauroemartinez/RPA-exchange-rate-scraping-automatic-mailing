@@ -1,10 +1,18 @@
-# Tema del tablero (dashboard/app.py) con los colores de la marca GlobalAIze.
-[theme]
-base = "dark"
+# Temas del tablero (dashboard/app.py) con los colores de la marca GlobalAIze.
+# Arranca con el tema del sistema de quien mira; el botón Oscuro / Claro del tablero lo cambia
+# (parámetro ?tema=claro u ?tema=oscuro) y la app pinta todo, gráficos incluidos.
+[theme.dark]
 primaryColor = "#0DA4CF"
 backgroundColor = "#040F23"
 secondaryBackgroundColor = "#051E45"
 textColor = "#F0EEE9"
+font = "sans serif"
+
+[theme.light]
+primaryColor = "#1687A9"
+backgroundColor = "#F3F1EC"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#051E45"
 font = "sans serif"
 
 [browser]

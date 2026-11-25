@@ -63,3 +63,4 @@ node_modules/
 
 # La copia diaria de los datos que lee el tablero publicado (la sube datos-dashboard.yml)
 !dashboard/data/mercado.csv
+!dashboard/data/series.csv
