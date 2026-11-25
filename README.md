@@ -14,6 +14,7 @@
 [![Gemini API](https://img.shields.io/badge/Gemini_API-1A73E8?style=flat&logo=google&logoColor=white)](https://ai.google.dev/)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-cron_trigger-F38020?style=flat&logo=cloudflareworkers&logoColor=white)](https://workers.cloudflare.com)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-daily_run-2088FF?style=flat&logo=githubactions&logoColor=white)](https://github.com/features/actions)
+[![Streamlit](https://img.shields.io/badge/Streamlit-live_dashboard-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://macro-argentina-globalaize.streamlit.app/)
 
 [![Pydantic](https://img.shields.io/badge/Pydantic-validated-E92063?style=flat&logo=pydantic&logoColor=white)](https://docs.pydantic.dev)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=flat&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org)
@@ -190,13 +191,14 @@ This repository features a robust, portfolio-grade Robotic Process Automation (R
 The system automates the ingestion of highly volatile financial variables, ensures data integrity within a centralized data warehouse, runs mathematical macro-projections, and distributes dynamic, highly styled financial reports to a private subscriber list. The same data feeds an executive PowerPoint deck. The whole run works unattended: a Cloudflare Worker cron gives the order and GitHub Actions executes it, both on free plans.
 
 ### 🛠️ Core Tech Stack & Frameworks
-* **Data Ingestion (ETL):** httpx (REST APIs), Playwright (async Web Scraping), openpyxl (the Treasury's monthly debt workbook).
+* **Data Ingestion (ETL):** httpx (REST APIs), Playwright (async Web Scraping), openpyxl (the Treasury's monthly debt workbook), yfinance (Bitcoin), tenacity (retries with backoff).
 * **Processing & Relational Mapping:** Pandas (Data Manipulation), SQLAlchemy (ORM).
 * **Data Validation:** Pydantic for strict schema validation before data is persisted.
 * **Configuration Management:** Pydantic-Settings for typed, fail-fast environment configuration.
 * **Data Warehouse:** **Supabase PostgreSQL** for cloud-hosted analytics and persistence. Before Supabase, I used Microsoft SQL Server 2022 and Microsoft SQL Server 2019.
 * **Generative AI:** Google Gemini Flash models with structured JSON output, validated with Pydantic, with multi-key and model failover (Contextual Macro Narrative Generation).
 * **Data Visualization & Delivery:** Matplotlib, Seaborn, Jinja2 HTML/CSS templates, tabulate, python-pptx (executive deck), SMTP Service.
+* **Live Dashboard:** Streamlit + Plotly (`dashboard/app.py`), published on Streamlit Community Cloud; a daily GitHub Actions workflow (`datos-dashboard.yml`) refreshes its CSV files, so it needs no credentials.
 * **Orchestration & CI:** a Cloudflare Worker (cron triggers, free plan) dispatches the daily run and the daily control at exact times; GitHub Actions (free plan) executes them and runs the test suite on every push. Dependencies are locked with uv from `.in` manifests; ruff lints every push.
 
 ---
@@ -225,10 +227,10 @@ The system automates the ingestion of highly volatile financial variables, ensur
 ├── tests/                   Offline test suite; tests/datos/ pins the mail HTML
 ├── sql/                     SQL applied by hand in Supabase: schema, migrations, cleaning
 ├── notebooks/               The read-only SQL lab
-├── dashboard/               Streamlit prototype, read-only, with its own requirements
+├── dashboard/               Live Streamlit dashboard (Streamlit Community Cloud), read-only, with its own requirements
 ├── Assets/                  Architecture diagram, README images and their generators
 ├── Previews/                Daily charts, auto-committed by the pipeline
-├── .github/workflows/       CI, plus the daily run and daily control
+├── .github/workflows/       CI, the daily run, the daily control and the dashboard data refresh
 ├── cloudflare/              The Worker that triggers the run on schedule (wrangler.toml + disparador.js)
 ├── pyproject.toml           pytest and ruff configuration
 └── requirements*.in / .txt  Direct dependencies, locked into the matching .txt
@@ -288,10 +290,10 @@ The six-phase roadmap is complete. What each phase left in production, and what 
 | 2. Reliability and diagnostics | ✅ | Per-stage state and duration, failed sends turn the run red, 260+ offline tests, golden HTML, secrets scrubbed from public logs. API caching evaluated and declined: nothing is heavy enough |
 | 3. Monetary aggregates and debt | ✅ | `Fact_Series_Macro` with 14 series, two charts in the mail with plain-language explanations, debt always in USD |
 | 4. Per-chart AI commentary | ✅ | One structured Gemini call, validated with Pydantic, stored as JSON; walks seven models and both keys before giving up |
-| 5. Analysis and presentations | ✅ | Read-only SQL lab, the daily executive deck, the PDF macro report. Streamlit dashboard: prototype, needs a read-only database role before it is published |
+| 5. Analysis and presentations | ✅ | Read-only SQL lab, the daily executive deck, the PDF macro report. Streamlit dashboard, live on Streamlit Community Cloud, fed by daily CSV exports (no database credentials) |
 | 6. Scheduling and monitoring | ✅ | GitHub Actions run, Postgres lock, holiday calendar, time window, daily control, CI on every push, a Cloudflare Worker as the trigger |
 
-Open items: the Streamlit dashboard review, and the start date of the variations chart, fixed in `charts.py` and due for a move.
+Open item: the start date of the variations chart, fixed in `charts.py` and due for a move.
 
 ---
 

@@ -14,6 +14,7 @@
 [![Gemini API](https://img.shields.io/badge/Gemini_API-1A73E8?style=flat&logo=google&logoColor=white)](https://ai.google.dev/)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-cron_trigger-F38020?style=flat&logo=cloudflareworkers&logoColor=white)](https://workers.cloudflare.com)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-daily_run-2088FF?style=flat&logo=githubactions&logoColor=white)](https://github.com/features/actions)
+[![Streamlit](https://img.shields.io/badge/Streamlit-live_dashboard-FF4B4B?style=flat&logo=streamlit&logoColor=white)](https://macro-argentina-globalaize.streamlit.app/)
 
 [![Pydantic](https://img.shields.io/badge/Pydantic-validated-E92063?style=flat&logo=pydantic&logoColor=white)](https://docs.pydantic.dev)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=flat&logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org)
@@ -190,13 +191,14 @@ Este repositorio contiene un pipeline robusto de automatización robótica de pr
 El sistema automatiza la ingesta de variables financieras muy volátiles, asegura la integridad de los datos en un data warehouse centralizado, corre proyecciones macro matemáticas y distribuye reportes financieros dinámicos, con un diseño muy cuidado, a una lista privada de suscriptores. Los mismos datos alimentan una presentación ejecutiva en PowerPoint. Toda la corrida funciona sin intervención: un cron de un Cloudflare Worker da la orden y GitHub Actions la ejecuta, los dos en planes gratuitos.
 
 ### 🛠️ Stack tecnológico y frameworks principales
-* **Ingesta de datos (ETL):** httpx (APIs REST), Playwright (web scraping asíncrono), openpyxl (el Excel mensual de deuda del Tesoro).
+* **Ingesta de datos (ETL):** httpx (APIs REST), Playwright (web scraping asíncrono), openpyxl (el Excel mensual de deuda del Tesoro), yfinance (Bitcoin), tenacity (reintentos con espera creciente).
 * **Procesamiento y mapeo relacional:** Pandas (manipulación de datos), SQLAlchemy (ORM).
 * **Validación de datos:** Pydantic, para una validación estricta del esquema antes de persistir los datos.
 * **Gestión de la configuración:** Pydantic-Settings, para una configuración de entorno tipada que falla rápido.
 * **Data warehouse:** **Supabase PostgreSQL** para analítica y persistencia en la nube. Antes de Supabase usé Microsoft SQL Server 2022 y Microsoft SQL Server 2019.
 * **IA generativa:** modelos Google Gemini Flash con salida JSON estructurada, validada con Pydantic, con failover entre claves y entre modelos (generación de una narrativa macro contextual).
 * **Visualización y entrega de datos:** Matplotlib, Seaborn, plantillas HTML/CSS con Jinja2, tabulate, python-pptx (presentación ejecutiva), servicio SMTP.
+* **Tablero online:** Streamlit + Plotly (`dashboard/app.py`), publicado en Streamlit Community Cloud; un workflow diario de GitHub Actions (`datos-dashboard.yml`) actualiza sus CSV, así que no necesita credenciales.
 * **Orquestación y CI:** un Cloudflare Worker (cron triggers, plan gratuito) dispara la corrida diaria y el control diario a horario exacto; GitHub Actions (plan gratuito) los ejecuta y corre la suite de tests en cada push. Las dependencias se fijan con uv a partir de manifiestos `.in`; ruff revisa el código en cada push.
 
 ---
@@ -225,10 +227,10 @@ El sistema automatiza la ingesta de variables financieras muy volátiles, asegur
 ├── tests/                   Suite de tests offline; tests/datos/ fija el HTML del mail
 ├── sql/                     SQL aplicado a mano en Supabase: esquema, migraciones, limpieza
 ├── notebooks/               El laboratorio SQL de solo lectura
-├── dashboard/               Prototipo en Streamlit, de solo lectura, con sus propios requirements
+├── dashboard/               Tablero de Streamlit publicado (Streamlit Community Cloud), de solo lectura, con sus propios requirements
 ├── Assets/                  Diagrama de arquitectura, imágenes del README y sus generadores
 ├── Previews/                Gráficos diarios, subidos automáticamente por el pipeline
-├── .github/workflows/       CI, más la corrida diaria y el control diario
+├── .github/workflows/       CI, la corrida diaria, el control diario y la actualización de datos del tablero
 ├── cloudflare/              El Worker que dispara la corrida en horario (wrangler.toml + disparador.js)
 ├── pyproject.toml           Configuración de pytest y ruff
 └── requirements*.in / .txt  Dependencias directas, fijadas en el .txt correspondiente
@@ -288,10 +290,10 @@ La hoja de ruta de seis fases está completa. Lo que dejó cada fase en producci
 | 2. Confiabilidad y diagnóstico | ✅ | Estado y duración por etapa, los envíos fallidos ponen la corrida en rojo, 260+ tests offline, HTML golden, secretos borrados de los logs públicos. Se evaluó cachear las APIs y se descartó: nada es lo bastante pesado |
 | 3. Agregados monetarios y deuda | ✅ | `Fact_Series_Macro` con 14 series, dos gráficos en el mail con explicaciones en lenguaje simple, deuda siempre en USD |
 | 4. Comentarios de IA por gráfico | ✅ | Una llamada estructurada a Gemini, validada con Pydantic y guardada como JSON; recorre siete modelos y las dos claves antes de darse por vencida |
-| 5. Análisis y presentaciones | ✅ | Laboratorio SQL de solo lectura, la presentación ejecutiva diaria, el reporte macro en PDF. Dashboard en Streamlit: prototipo, necesita un rol de base de datos de solo lectura antes de publicarse |
+| 5. Análisis y presentaciones | ✅ | Laboratorio SQL de solo lectura, la presentación ejecutiva diaria, el reporte macro en PDF. Dashboard en Streamlit, publicado en Streamlit Community Cloud y alimentado por CSV diarios (sin credenciales de la base) |
 | 6. Programación y monitoreo | ✅ | Corrida en GitHub Actions, lock de Postgres, calendario de feriados, ventana horaria, control diario, CI en cada push, un Cloudflare Worker como disparador |
 
-Pendientes: la revisión del dashboard en Streamlit, y la fecha de inicio del gráfico de variaciones, fija en `charts.py` y que ya toca mover.
+Pendiente: la fecha de inicio del gráfico de variaciones, fija en `charts.py` y que ya toca mover.
 
 ---
 
