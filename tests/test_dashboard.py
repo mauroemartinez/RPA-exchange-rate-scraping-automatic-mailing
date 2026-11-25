@@ -35,9 +35,14 @@ def test_el_dashboard_arranca_desde_el_csv(tmp_path, historico, monkeypatch):
                    "Riesgo país", "BADLAR (TEA)"]:
         assert rotulo in html
     assert "vs. " in html
-    assert len(app.tabs) == 12
-    # Cada tema tiene su propio filtro, dentro de su pestaña
-    assert [m.label for m in app.multiselect] == ["Cotizaciones oficiales", "Cotizaciones paralelas", "Brechas", "Series"]
+    # Una sola vista: las tarjetas van en la barra lateral y los doce temas son un selector, no pestañas
+    assert len(app.tabs) == 0
+    assert "Dólar blue (venta)" in " ".join(m.value for m in app.sidebar.markdown)
+    selectores = [[o.content for o in g.proto.options] for g in app.get("button_group")]
+    assert ["Oficiales", "Paralelos", "Brechas", "Riesgo país", "Tasas", "Inflación", "Dinero y BCRA", "Deuda",
+            "Bitcoin", "Análisis de IA", "Datos", "Fuentes"] in selectores
+    # Solo el tema elegido arma su filtro: el primero, el de las cotizaciones oficiales
+    assert [m.label for m in app.multiselect] == ["Cotizaciones oficiales"]
 
 
 def test_la_suba_del_dolar_se_pinta_como_mala(tmp_path, historico, monkeypatch):

@@ -35,7 +35,7 @@ st.set_page_config(
     page_title="Seguimiento macroeconómico | GlobalAIze",
     page_icon=str(AQUI / "assets" / "globalaize-favicon.svg"),
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # ── Idioma ────────────────────────────────────────────────────────────────────
@@ -260,12 +260,19 @@ def _estilos() -> None:
   [role="listbox"], [role="listbox"] [role="option"] { background: @hover !important; color: @tinta !important; }
   [data-testid="stAlert"] > div { background: @vidrio; color: @tinta; }
   [data-testid="stDownloadButton"] button { background: @vidrio; color: @tinta; border-color: @borde; }
-  header[data-testid="stHeader"] { background: transparent; }
-  [data-testid="stDecoration"], footer { display: none; }
-  .block-container { padding-top: 2.2rem; max-width: 1400px; }
+  header[data-testid="stHeader"], [data-testid="stDecoration"], [data-testid="stToolbar"], footer { display: none; }
+  /* Una sola vista: casi todo el ancho de la pantalla, sin márgenes de más. Las tarjetas van en la barra
+     lateral, siempre abierta, y el contenido (tema, filtros y gráfico) en el centro. */
+  .block-container { padding: 0.9rem 1.8rem 0.4rem; max-width: 100%; }
+  section[data-testid="stSidebar"] { background: transparent; width: 340px !important; min-width: 340px !important;
+                                     border-right: 1px solid @linea_tabs; }
+  section[data-testid="stSidebar"] > div { background: transparent; }
+  [data-testid="stSidebarContent"] { padding: 0.9rem 0.9rem 0.4rem; }
+  [data-testid="stSidebarHeader"], [data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"],
+  [data-testid="collapsedControl"] { display: none !important; }
   .encabezado { display: flex; align-items: center; gap: 20px; }
-  .encabezado img { height: 52px; width: auto; display: block; }
-  .encabezado .titulo { font-size: 2.2rem; color: @tinta; line-height: 1.05; margin: 0; }
+  .encabezado img { height: 40px; width: auto; display: block; }
+  .encabezado .titulo { font-size: 1.7rem; color: @tinta; line-height: 1.05; margin: 0; }
   @media (max-width: 900px) { .encabezado { flex-wrap: wrap; } .encabezado .titulo { font-size: 1.7rem; } }
   .idiomas { display: inline-flex; border: 1px solid @borde; border-radius: 8px; overflow: hidden; background: @vidrio; }
   .idiomas a { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; color: @tinta !important;
@@ -273,7 +280,7 @@ def _estilos() -> None:
   .idiomas a + a { border-left-color: @borde; }
   .idiomas a.activo { color: @acento !important; border-color: @acento; border-radius: 8px; }
   .idiomas svg { width: 20px; height: 14px; border-radius: 2px; box-shadow: 0 0 0 1px rgb(0 0 0 / .15); flex: none; }
-  .bajada { color: @secundario; font-size: 0.92rem; margin: 10px 0 14px; }
+  .bajada { color: @secundario; font-size: 0.82rem; margin: 4px 0 8px; }
   /* Vidrio de la marca: tinte, desenfoque, canto de luz fino (más claro arriba a la izquierda
      y abajo a la derecha), sin brillo, sombra suave y radio 14. */
   .vidrio {
@@ -287,11 +294,13 @@ def _estilos() -> None:
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
   }
-  .tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 8px 0 8px; }
-  .tarjeta { padding: 14px 16px; }
-  .tarjeta .rotulo { color: @secundario; font-size: 0.76rem; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
-  .tarjeta .valor { color: @tinta; font-size: 1.65rem; font-weight: 600; margin: 2px 0 6px; }
-  .tarjeta .delta { font-size: 0.8rem; color: @secundario; line-height: 1.55; }
+  .tarjetas { display: flex; flex-direction: column; gap: 8px; margin: 0 0 8px; }
+  .tarjeta { padding: 9px 14px; }
+  .tarjeta .rotulo { color: @secundario; font-size: 0.68rem; letter-spacing: .05em; text-transform: uppercase; font-weight: 600; }
+  .tarjeta .valor { color: @tinta; font-size: 1.4rem; font-weight: 600; margin: 1px 0 3px; line-height: 1.2; }
+  .tarjeta .delta { font-size: 0.72rem; color: @secundario; line-height: 1.45; }
+  .tarjeta .delta .sep { color: @tenue; }
+  .scroll { max-height: calc(100vh - 370px); overflow-y: auto; }
   .tarjeta .delta b { font-weight: 600; }
   .sube { color: @sube; } .baja { color: @baja; } .neutro { color: @tinta; }
   .stTabs [data-baseweb="tab-list"] { gap: 4px; border-bottom: 1px solid @linea_tabs; flex-wrap: wrap; }
@@ -308,7 +317,7 @@ def _estilos() -> None:
   .fuentes table { width: 100%; border-collapse: collapse; color: @tinta; font-size: 0.9rem; }
   .fuentes td, .fuentes th { padding: 9px 12px; border-bottom: 1px solid @linea_tabs; text-align: left; vertical-align: top; }
   .fuentes th { color: @secundario; font-weight: 600; }
-  .tabla-datos { overflow-x: auto; padding: 4px 8px; }
+  .tabla-datos { overflow: auto; max-height: calc(100vh - 400px); padding: 4px 8px; }
   .analisis { padding: 14px 18px; margin-bottom: 12px; color: @tinta; font-size: 0.92rem; line-height: 1.55; }
   .analisis p { margin: 6px 0 0; color: @tinta; }
   .tabla-datos table { font-size: 0.8rem; white-space: nowrap; }
@@ -380,12 +389,12 @@ def linea_delta(d: float, etiqueta: str, suba_es_mala, puntos: bool, unidad: str
         clase = "baja" if (d > 0) == suba_es_mala else "sube"
     signo = "+" if d > 0 else ""
     texto = f"{flecha(d)} {signo}{num(d, dec)} {unidad}" if puntos else f"{flecha(d)} {pct(d)}"
-    return f'<span class="{clase}"><b>{texto}</b></span> {etiqueta}'
+    return f'<span style="white-space:nowrap; margin-right:10px"><span class="{clase}"><b>{texto}</b></span> {etiqueta}</span>'
 
 
 def tarjeta(rotulo: str, valor: str, renglones: list[str]) -> str:
     return (f'<div class="vidrio tarjeta"><div class="rotulo">{rotulo}</div><div class="valor">{valor}</div>'
-            f'<div class="delta">{"<br>".join(renglones)}</div></div>')
+            f'<div class="delta">{"".join(renglones)}</div></div>')
 
 
 def tarjeta_diaria(rotulo, valor, serie, actual, suba_es_mala=None, puntos=False, unidad="pts", dec=0):
@@ -400,6 +409,7 @@ def tarjeta_diaria(rotulo, valor, serie, actual, suba_es_mala=None, puntos=False
 
 
 # ── Gráficos ──────────────────────────────────────────────────────────────────
+ALTO = 540  # alto del gráfico: con el encabezado, el tema y el filtro entra en una pantalla de 1080 sin desplazarla
 def _ticks(indice: pd.DatetimeIndex) -> dict:
     meses = T["meses"]
     dias = (indice.max() - indice.min()).days
@@ -450,7 +460,7 @@ def _rango(valores: list, nunca_negativo: bool, incluir_cero: bool = False):
 
 
 def grafico(series: dict, *, prefijo="", sufijo="", dec=2, nunca_negativo=True, linea_cero=False,
-            extremos=False, alto=430, titulo_y: str = "") -> go.Figure:
+            extremos=False, alto=ALTO, titulo_y: str = "") -> go.Figure:
     """Líneas: ejes visibles, etiqueta del último valor de cada serie y escala pegada a los datos."""
     fig = go.Figure()
     valores, etiquetas, indice = [], [], None
@@ -487,7 +497,7 @@ def grafico(series: dict, *, prefijo="", sufijo="", dec=2, nunca_negativo=True, 
     return _layout(fig, alto, prefijo, sufijo, rango, indice, titulo_y)
 
 
-def barras(series: dict, *, prefijo="", sufijo="", dec=1, linea: dict | None = None, alto=430,
+def barras(series: dict, *, prefijo="", sufijo="", dec=1, linea: dict | None = None, alto=ALTO,
            titulo_y: str = "") -> go.Figure:
     """Barras mensuales con la etiqueta de cada valor; opcionalmente una línea encima (eje propio)."""
     fig = go.Figure()
@@ -607,27 +617,25 @@ fechas_ref = {
     T["anio"]: pd.Timestamp(hoy.year - 1, 12, 31),
 }
 
-# Encabezado: logo y título alineados, y a la derecha el idioma
-izquierda, botones = st.columns([6, 2.6], vertical_alignment="center")
+# Encabezado: logo y título a la izquierda; el tema y, pegado al borde derecho, el idioma
+izquierda, col_tema, col_idioma = st.columns([8, 1.5, 1.25], vertical_alignment="center")
 with izquierda:
     st.markdown(f'<div class="encabezado"><img src="data:image/svg+xml;base64,{_logo()}" alt="GlobalAIze">'
                 f'<div class="titulo">{T["titulo"]}</div></div>', unsafe_allow_html=True)
-with botones:
-    col_idioma, col_tema = st.columns([1.25, 1])
-    with col_idioma:
-        # Links y no un control de Streamlit: los emojis de bandera no se ven en Windows, así que van en SVG
-        tema_url = "oscuro" if OSCURO else "claro"
-        st.markdown('<div class="idiomas">' + "".join(
-            f'<a href="?lang={codigo}&tema={tema_url}" target="_self" class="{"activo" if codigo == IDIOMA else ""}"'
-            f' aria-label="{nombre}">{BANDERAS[codigo]}<span>{codigo.upper()}</span></a>'
-            for codigo, nombre in (("es", "Español"), ("en", "English"))) + "</div>", unsafe_allow_html=True)
-    with col_tema:
-        oscuro, claro = T["oscuro"], T["claro"]
-        elegido_tema = st.segmented_control("Tema / Theme", [oscuro, claro], default=oscuro if OSCURO else claro,
-                                            label_visibility="collapsed", key=f"tema_{IDIOMA}")
-    if elegido_tema and (elegido_tema == oscuro) != OSCURO:
-        st.query_params["tema"] = "oscuro" if elegido_tema == oscuro else "claro"
-        st.rerun()
+with col_tema:
+    oscuro, claro = T["oscuro"], T["claro"]
+    elegido_tema = st.segmented_control("Tema / Theme", [oscuro, claro], default=oscuro if OSCURO else claro,
+                                        label_visibility="collapsed", key=f"tema_{IDIOMA}")
+if elegido_tema and (elegido_tema == oscuro) != OSCURO:
+    st.query_params["tema"] = "oscuro" if elegido_tema == oscuro else "claro"
+    st.rerun()
+with col_idioma:
+    # Links y no un control de Streamlit: los emojis de bandera no se ven en Windows, así que van en SVG
+    tema_url = "oscuro" if OSCURO else "claro"
+    st.markdown('<div class="idiomas" style="float:right">' + "".join(
+        f'<a href="?lang={codigo}&tema={tema_url}" target="_self" class="{"activo" if codigo == IDIOMA else ""}"'
+        f' aria-label="{nombre}">{BANDERAS[codigo]}<span>{codigo.upper()}</span></a>'
+        for codigo, nombre in (("es", "Español"), ("en", "English"))) + "</div>", unsafe_allow_html=True)
 st.markdown(f'<div class="bajada">{T["bajada"].format(fecha=fecha_larga(hoy), desde=fecha_larga(primero))}</div>',
             unsafe_allow_html=True)
 
@@ -656,14 +664,19 @@ if len(inflacion) >= 2:
 btc = serie_larga("bitcoin")
 if not btc.empty:
     tarjetas.append(tarjeta_diaria(T["bitcoin"], f"US$ {num(btc.iloc[-1], 0)}", btc, btc.iloc[-1]))
-st.markdown(f'<div class="tarjetas">{"".join(tarjetas)}</div>', unsafe_allow_html=True)
-nota(T["nota_tarjetas"].format(ayer=fecha_larga(ayer), anio=hoy.year - 1))
+with st.sidebar:
+    st.markdown(f'<div class="tarjetas">{"".join(tarjetas)}</div>', unsafe_allow_html=True)
+
 
 # ── Período ──
 periodos = {T["p1m"]: 1, T["p3m"]: 3, T["p6m"]: 6, T["p1a"]: 12, T["pytd"]: "ytd",
             T["ptodo"].format(desde=mes_anio(primero)): None}
-st.write("")
-elegido = st.segmented_control(T["periodo"], list(periodos), default=T["p6m"], key=f"periodo_{IDIOMA}")
+tema_elegido = st.segmented_control("Tema / Topic", T["pest"], default=T["pest"][0], key=f"seccion_{IDIOMA}",
+                                    label_visibility="collapsed")
+tema_idx = T["pest"].index(tema_elegido) if tema_elegido in T["pest"] else 0
+col_periodo, FILTRO = st.columns([3, 4], vertical_alignment="bottom")
+with col_periodo:
+    elegido = st.segmented_control(T["periodo"], list(periodos), default=T["p6m"], key=f"periodo_{IDIOMA}")
 meses = periodos.get(elegido or T["p6m"], 6)
 if meses == "ytd":
     desde = pd.Timestamp(hoy.year, 1, 1)
@@ -679,12 +692,16 @@ def recorte(s: pd.Series, mensual: bool = False) -> pd.Series:
     return s[s.index >= (desde_mensual if mensual else desde)]
 
 
-pest = st.tabs(T["pest"])
+def filtro(*args, **kwargs):
+    """El filtro de cada tema va en la fila de arriba, al lado del período."""
+    with FILTRO:
+        return st.multiselect(*args, **kwargs)
 
-with pest[0]:  # Oficiales
+
+if tema_idx == 0:  # Oficiales
     opciones = ["TCV_Billete", "TCC_Billete", "TCV_Divisas", "TCC_Divisas", "Solidario", "tipo_cambio_mayorista"]
     datos = {c: (p[c] if c in p else recorte(serie_larga(c))) for c in opciones}
-    elegidas = st.multiselect(T["sel_oficiales"], [N[c] for c in opciones],
+    elegidas = filtro(T["sel_oficiales"], [N[c] for c in opciones],
                               default=[N["TCV_Billete"], N["tipo_cambio_mayorista"], N["Solidario"]], key=f"of_{IDIOMA}")
     claves = [c for c in opciones if N[c] in elegidas]
     if claves:
@@ -693,9 +710,9 @@ with pest[0]:  # Oficiales
     else:
         st.info(T["elegi"])
 
-with pest[1]:  # Paralelos
+if tema_idx == 1:  # Paralelos
     opciones = ["TCV_Blue", "TCC_Blue", "TCV_MEP", "TCV_Euro", "TCC_Euro"]
-    elegidas = st.multiselect(T["sel_paralelos"], [N[c] for c in opciones],
+    elegidas = filtro(T["sel_paralelos"], [N[c] for c in opciones],
                               default=[N["TCV_Blue"], N["TCV_MEP"], N["TCV_Euro"]], key=f"par_{IDIOMA}")
     claves = [c for c in opciones if N[c] in elegidas]
     if claves:
@@ -704,7 +721,7 @@ with pest[1]:  # Paralelos
     else:
         st.info(T["elegi"])
 
-with pest[2]:  # Brechas
+if tema_idx == 2:  # Brechas
     mayorista = recorte(serie_larga("tipo_cambio_mayorista")).reindex(p.index).ffill()
     brechas = {
         "g_blue_of": (p["TCV_Blue"] / p["TCV_Billete"] - 1) * 100,
@@ -713,7 +730,7 @@ with pest[2]:  # Brechas
         "g_sol_blue": (p["Solidario"] / p["TCV_Blue"] - 1) * 100,
         "g_of_may": (p["TCV_Billete"] / mayorista - 1) * 100,
     }
-    elegidas = st.multiselect(T["sel_brechas"], [N[c] for c in brechas],
+    elegidas = filtro(T["sel_brechas"], [N[c] for c in brechas],
                               default=[N["g_blue_of"], N["g_mep_div"], N["g_blue_mep"]], key=f"br_{IDIOMA}")
     claves = [c for c in brechas if N[c] in elegidas]
     if claves:
@@ -722,24 +739,24 @@ with pest[2]:  # Brechas
     else:
         st.info(T["elegi"])
 
-with pest[3]:  # Riesgo país
+if tema_idx == 3:  # Riesgo país
     mostrar(grafico({N["riesgo_pais"]: p["riesgo_pais"]}, sufijo=" pts", dec=0, extremos=True))
     resumen(N["riesgo_pais"], p["riesgo_pais"], sufijo=" pts", dec=0)
 
-with pest[4]:  # Tasas
+if tema_idx == 4:  # Tasas
     mostrar(grafico({N["bcra_tea"]: p["bcra_tea"], N["fed_tea"]: p["fed_tea"], N["dif"]: p["bcra_tea"] - p["fed_tea"]},
                     sufijo=" %"))
     nota(T["nota_tasas"])
 
-with pest[5]:  # Inflación
+if tema_idx == 5:  # Inflación
     mostrar_barras(barras({N["inflacion_mensual"]: recorte(inflacion, True)}, sufijo=" %",
                    linea={N["inflacion_interanual"]: recorte(interanual, True)}))
     nota(T["nota_inflacion"] + " " + T["nota_mensual"])
 
-with pest[6]:  # Dinero y BCRA
+if tema_idx == 6:  # Dinero y BCRA
     opciones = ["base_monetaria", "circulacion_monetaria", "billetes_publico", "m2", "m2_transaccional_privado",
                 "prestamos_sector_privado", "letras_bcra_pesos", "letras_bcra_moneda_extranjera", "adelantos_transitorios"]
-    elegidas = st.multiselect(T["sel_dinero"], [N[c] for c in opciones],
+    elegidas = filtro(T["sel_dinero"], [N[c] for c in opciones],
                               default=[N["base_monetaria"], N["m2"], N["prestamos_sector_privado"]], key=f"din_{IDIOMA}")
     claves = [c for c in opciones if N[c] in elegidas]
     if claves:
@@ -749,16 +766,16 @@ with pest[6]:  # Dinero y BCRA
     else:
         st.info(T["elegi"])
 
-with pest[7]:  # Deuda
+if tema_idx == 7:  # Deuda
     deuda = recorte(serie_larga("deuda_bruta_tesoro"), True) / 1e3
     mostrar_barras(barras({N["deuda_bruta_tesoro"]: deuda}, prefijo="US$ ", dec=1, titulo_y=T["usd_bn"]))
     nota(T["nota_deuda"] + " " + T["nota_mensual"])
 
-with pest[8]:  # Bitcoin
+if tema_idx == 8:  # Bitcoin
     mostrar(grafico({N["bitcoin"]: recorte(btc)}, prefijo="US$ ", dec=0, extremos=True))
     resumen(N["bitcoin"], recorte(btc), "US$ ", dec=0)
 
-with pest[9]:  # Análisis de IA
+if tema_idx == 9:  # Análisis de IA
     if T["ia_idioma"]:
         nota(T["ia_idioma"])
     parrafos = p["ai_paragraph"].dropna() if "ai_paragraph" in p else pd.Series(dtype=str)
@@ -767,10 +784,10 @@ with pest[9]:  # Análisis de IA
         st.info(T["sin_ia"])
     bloques = "".join(f'<div class="vidrio analisis"><b>{fecha_larga(fecha)}</b><p>{html.escape(str(parrafo))}</p></div>'
                       for fecha, parrafo in parrafos.head(10).items())
-    st.markdown(bloques, unsafe_allow_html=True)
+    st.markdown(f'<div class="scroll">{bloques}</div>', unsafe_allow_html=True)
     nota(T["nota_ia"])
 
-with pest[10]:  # Datos (solo lo publicado, desde el 1 de enero de hace dos años)
+if tema_idx == 10:  # Datos (solo lo publicado, desde el 1 de enero de hace dos años)
     visibles = [c for c in p.columns if c not in ("ai_paragraph", "ai_model")]
     recientes = p[visibles].sort_index(ascending=False).head(30)
     encabezado = "".join(f"<th>{c}</th>" for c in ["Fecha" if IDIOMA == "es" else "Date", *[N.get(c, c) for c in visibles]])
@@ -783,10 +800,12 @@ with pest[10]:  # Datos (solo lo publicado, desde el 1 de enero de hace dos año
     st.download_button(T["descargar"], p[visibles].to_csv().encode("utf-8"), "seguimiento_macroeconomico.csv", "text/csv")
     nota(T["nota_datos"].format(desde=fecha_larga(primero)))
 
-with pest[11]:  # Fuentes
+if tema_idx == 11:  # Fuentes
     filas = "".join(f"<tr><td>{f}</td><td>{q}</td></tr>" for f, q in FUENTES[IDIOMA])
     st.markdown(f'<div class="vidrio fuentes" style="padding:6px 10px"><table><tr><th>{T["fuente"]}</th><th>{T["aporta"]}</th></tr>'
                 f"{filas}</table></div>", unsafe_allow_html=True)
     nota(T["nota_fuentes"].format(repo=REPO))
 
-st.markdown(f'<div class="pie">{T["pie"].format(repo=REPO)}</div>', unsafe_allow_html=True)
+# Al pie del centro: cómo leer las tarjetas y los enlaces
+nota(T["nota_tarjetas"].format(ayer=fecha_larga(ayer), anio=hoy.year - 1))
+st.markdown(f'<div class="pie" style="margin:4px 0 0; text-align:left">{T["pie"].format(repo=REPO)}</div>', unsafe_allow_html=True)
