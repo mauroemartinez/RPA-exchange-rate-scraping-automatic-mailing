@@ -79,7 +79,7 @@ El pipeline rearma todos los días hábiles una presentación de PowerPoint de n
 
 <p align="center">
   <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx">
-    <img src="Assets/Presentacion.jpg" width="900" alt="Presentación ejecutiva: las nueve diapositivas">
+    <img src="Assets/Presentacion-v2.jpg" width="900" alt="Presentación ejecutiva: las nueve diapositivas">
   </a>
 </p>
 

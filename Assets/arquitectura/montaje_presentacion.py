@@ -1,4 +1,4 @@
-"""Arma Assets/Presentacion.jpg, la vista del deck en el README: las nueve diapositivas en una grilla de 3 x 3.
+"""Arma Assets/Presentacion-v2.jpg, la vista del deck en el README: las nueve diapositivas en una grilla de 3 x 3.
 
 Exporta cada diapositiva con PowerPoint (por COM, así que necesita Windows con
 PowerPoint instalado) y las monta sobre el azul del reporte, con esquinas
@@ -17,7 +17,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
 
-DESTINO = Path(__file__).resolve().parent.parent / "Presentacion.jpg"
+DESTINO = Path(__file__).resolve().parent.parent / "Presentacion-v2.jpg"
 FONDO_ARRIBA, FONDO_ABAJO = (8, 30, 64), (22, 58, 107)  # los azules del reporte
 ANCHO_SLIDE, ALTO_SLIDE = 560, 315
 MARGEN, ESPACIO, RADIO = 40, 28, 12

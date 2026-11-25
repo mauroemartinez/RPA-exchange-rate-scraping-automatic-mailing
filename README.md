@@ -79,7 +79,7 @@ The pipeline rebuilds a nine-slide PowerPoint every business day and keeps only 
 
 <p align="center">
   <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx">
-    <img src="Assets/Presentacion.jpg" width="900" alt="Executive deck: the nine slides">
+    <img src="Assets/Presentacion-v2.jpg" width="900" alt="Executive deck: the nine slides">
   </a>
 </p>
 
