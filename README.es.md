@@ -37,6 +37,16 @@
 
 ---
 
+## 📈 Tablero online
+
+**[macro-argentina-globalaize.streamlit.app](https://macro-argentina-globalaize.streamlit.app/)**: los mismos datos del mail, para explorarlos por tu cuenta. Dólares oficiales y paralelos, brechas, riesgo país, tasas y el análisis de IA, cada tema en su pestaña con su propio filtro, y cada variación dice contra qué fecha se compara. Se actualiza todos los días hábiles con un workflow chico (`datos-dashboard.yml`) que copia los datos a `dashboard/data/mercado.csv`, así el tablero publicado no necesita credenciales.
+
+<p align="center"><img src="Assets/tablero-streamlit.jpg" width="900" alt="El tablero online: las tarjetas del día con sus variaciones y el gráfico del dólar oficial"></p>
+
+En el plan gratis de Streamlit la app se duerme si nadie la usa: la primera visita puede tardar unos segundos en despertarla.
+
+---
+
 ## 📬 Qué llega a la casilla cada día hábil
 
 A las 16:00, hora de Argentina, una lista privada de suscriptores recibe un único mail en HTML: los tipos de cambio oficiales y paralelos del día con sus brechas, el riesgo país, la inflación, las proyecciones forward de Irving Fisher, Bitcoin, los agregados monetarios y la deuda pública y privada de Argentina en dólares. Gemini redacta el análisis; Python calcula cada número que cita.

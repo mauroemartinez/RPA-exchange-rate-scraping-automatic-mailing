@@ -37,6 +37,16 @@
 
 ---
 
+## 📈 Live dashboard
+
+**[macro-argentina-globalaize.streamlit.app](https://macro-argentina-globalaize.streamlit.app/)**: the same data as the mail, to explore on your own. Official and parallel dollars, gaps, country risk, interest rates and the AI analysis, each topic in its own tab with its own filter, and every change says what it is compared against. It is updated every business day by a small workflow (`datos-dashboard.yml`) that copies the data into `dashboard/data/mercado.csv`, so the published dashboard needs no credentials.
+
+<p align="center"><img src="Assets/tablero-streamlit.jpg" width="900" alt="The live dashboard: today's cards with their changes and the official dollar chart"></p>
+
+The free Streamlit plan puts the app to sleep when nobody uses it: the first visit can take a few seconds to wake it up.
+
+---
+
 ## 📬 What lands in the inbox every business day
 
 At 16:00 Argentina time, a private subscriber list receives one HTML mail: the day's official and parallel FX rates with their spreads, country risk, inflation, Irving Fisher forward rates, Bitcoin, the monetary aggregates and Argentina's public and private debt in US dollars. Gemini writes the narrative; Python computes every number it quotes.
