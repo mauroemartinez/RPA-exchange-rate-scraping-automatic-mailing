@@ -3,31 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
+    {#- Estética de GlobalAIze, la del sitio, el deck y los tableros: fondo #040F23, tarjetas mates de azul marino
+        con un borde fino (en el mail no hay vidrio esmerilado: los clientes no soportan backdrop-filter, así que la
+        tarjeta es un color liso que se parece al panel), tinta #F0EEE9, títulos en serif y sin rayitas de acento.
+        Colores: fondo #040F23, tarjeta #091F45, borde #21406B, tinta #F0EEE9, texto #BBC5D1, tenue #8D9AA8,
+        cian #0DA4CF, rojo #EF6661 y verde #62D286 (solo para subas y bajas). #}
     <style>
         /* RESET Y BASE */
-        body { background-color: #081e40; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #040f23; margin: 0; padding: 0; font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif; }
 
         /* CONTENEDOR PRINCIPAL - clave para mobile */
-        .container {
-            max-width: 800px;
-            width: 100% !important;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 0;
-            box-shadow: none;
-        }
+        .container { max-width: 800px; width: 100% !important; margin: 0 auto; background-color: #040f23; }
 
         /* TIPOGRAFÍA */
-        p, div, b, span { font-size: 13px !important; color: #081e40; line-height: 1.6; text-align: left !important; }
+        p, div, b, span { font-size: 13px !important; color: #bbc5d1; line-height: 1.6; text-align: left !important; }
 
         /* TABLAS - scroll horizontal en mobile */
         .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        /* Solo las tablas de datos: las de maquetación no llevan borde, ni ancho mínimo, ni filas grises */
-        .table-wrapper table { border-collapse: collapse; width: 100%; min-width: 400px; margin: 12px 0; border: 1px solid #dcdde1;
-                box-shadow: 0 2px 6px rgba(8,30,64,0.16); }
-        .table-wrapper table td, .table-wrapper table th { font-size: 8px !important; padding: 4px 2px; text-align: center; border: 1px solid #dcdde1; }
-        .table-wrapper th { background-color: #163a6b; color: #ffffff; text-transform: uppercase; }
-        .table-wrapper tr:nth-child(even) { background-color: #f8f9fa; }
+        /* Solo las tablas de datos: las de maquetación no llevan borde ni ancho mínimo */
+        .table-wrapper table { border-collapse: collapse; width: 100%; min-width: 400px; margin: 12px 0; border: 1px solid #21406b;
+                background-color: #091f45; }
+        .table-wrapper table td, .table-wrapper table th { font-size: 8px !important; padding: 4px 2px; text-align: center; border: 1px solid #1a3459;
+                color: #f0eee9; }
+        .table-wrapper th { background-color: #0d2c5f; color: #bbc5d1; text-transform: uppercase; letter-spacing: 0.3px; }
+        .table-wrapper tr:nth-child(even) td { background-color: #0b2550; }
 
         /* Inflación (4 columnas) y Variaciones (7) entran cómodas a 12px.
            Cotizaciones tiene 14 columnas: a 12px se pasa del ancho del mail, así
@@ -37,106 +38,76 @@
         .tabla-variaciones table td, .tabla-variaciones table th { font-size: 12px !important; padding: 7px 6px; }
         .tabla-cotizaciones table td, .tabla-cotizaciones table th { font-size: 10px !important; padding: 5px 3px; }
 
-        /* Sombra en los gráficos. Gmail y Outlook descartan box-shadow, así que
-           el borde es lo que garantiza el recorte; la sombra es un extra que se
-           ve en Apple Mail y clientes web modernos. */
-        .grafico { box-shadow: 0 2px 6px rgba(8,30,64,0.16); }
+        /* Los gráficos ya traen su tarjeta de vidrio dibujada, sobre el mismo azul del fondo: sin borde ni sombra */
+        .grafico { border: 0; }
 
-        /* HEADER */
-        .header-box { background: linear-gradient(135deg, #081e40 0%, #163a6b 100%); color: white; padding: 20px 15px; text-align: center; }
-        .header-box h2 { color: white; font-size: 18px; margin: 0; }
-
-        /* PÁRRAFO IA */
-        .ai-box {
-            background: linear-gradient(135deg, #081e40 0%, #163a6b 100%);
-            border-left: 4px solid #697e91;
-            border-radius: 6px;
-            padding: 16px 18px;
-            margin: 20px 0;
-        }
-        .ai-box .ai-label {
-            font-size: 11px !important;
-            color: #a8c3db;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-align: left !important;
-        }
-        .ai-box p {
-            color: #ecf0f1 !important;
-            font-size: 13px !important;
-            line-height: 1.7;
-            margin: 0;
-            text-align: left !important;
-        }
-
-        /* FOOTER */
-        .footer { font-size: 10px !important; color: #7f8c8d; border-top: 1px solid #dcdde1; margin-top: 30px; padding-top: 15px; }
+        .titulo-serif { font-family: 'Newsreader', Georgia, 'Times New Roman', serif; font-weight: normal; }
 
         /* MOBILE */
         @media only screen and (max-width: 600px) {
-            .container { border-radius: 0 !important; }
-            .inner-pad { padding: 18px 16px 26px 16px !important; text-align: left !important; }
-            .header-box h2 { font-size: 15px !important; }
-            .ai-box p { font-size: 12px !important; }
+            .inner-pad { padding: 18px 14px 26px 14px !important; text-align: left !important; }
+            .titulo-serif { font-size: 24px !important; }
             p, div, b, span { font-size: 12px !important; text-align: left !important; }
+            .logo-cab { width: 200px !important; height: auto !important; }
         }
     </style>
 </head>
-<body style="margin:0; padding:0; background-color:#081e40; font-family:Arial,sans-serif;">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#081e40" style="background-color:#081e40; table-layout:fixed;">
+<body style="margin:0; padding:0; background-color:#040f23; font-family:'IBM Plex Sans','Segoe UI',Arial,sans-serif;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#040f23" style="background-color:#040f23; table-layout:fixed;">
   <tr>
     <td align="center" style="padding:20px 10px;">
-      <table class="container" width="800" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="max-width:800px; width:100%; border-radius:8px; overflow:hidden; table-layout:fixed;">
+      <table class="container" width="800" border="0" cellspacing="0" cellpadding="0" bgcolor="#040f23" style="max-width:800px; width:100%; background-color:#040f23; table-layout:fixed;">
 
-        <!-- HEADER -->
+        <!-- ENCABEZADO: el logo claro sobre el fondo oscuro, el título en serif y el deck del día -->
         <tr>
-          <td class="header-box" bgcolor="#081e40" style="background-color:#081e40; background:linear-gradient(135deg,#081e40 0%,#163a6b 100%); padding:20px; text-align:center;">
-            <img src="cid:logo" width="64" height="64" alt="GlobalAIze" style="display:block; margin:0 auto 10px auto; width:64px; height:64px; border-radius:12px; border:2px solid #ffffff; background-color:#ffffff;">
-            <h2 style="margin:0; color:white;">📊 Reporte Macroeconómico Diario</h2>
-            <div class="firma" style="margin:6px 0 0 0; font-size:11px !important; color:#bdc3c7; text-align:center !important;">por <a href="https://linkedin.com/in/mauroemartinez/" style="color:#ecf0f1; text-decoration:none;"><b style="color:#ecf0f1;">Mauro E. Martinez</b></a> · <a href="https://www.globalaize.com" style="color:#a8c3db; text-decoration:none;"><b style="color:#a8c3db;">GlobalAIze</b></a></div>
+          <td class="header-box" bgcolor="#040f23" style="background-color:#040f23; padding:26px 20px 10px 20px; text-align:center;">
+            <img class="logo-cab" src="cid:logo" width="260" alt="GlobalAIze" style="display:block; margin:0 auto 22px auto; width:260px; max-width:100%; height:auto; border:0;">
+            <h2 class="titulo-serif" style="margin:0; font-family:'Newsreader',Georgia,'Times New Roman',serif; font-weight:normal; font-size:32px; line-height:1.15; color:#f0eee9; text-align:center;">📊 Reporte Macroeconómico Diario</h2>
+            <div style="margin:10px 0 0 0; font-size:14px !important; color:#bbc5d1; text-align:center !important;"><span style="font-size:14px !important; color:#f0eee9; font-weight:bold;">{{ fecha_reporte }}</span></div>
+            <div class="firma" style="margin:6px 0 0 0; font-size:11px !important; color:#8d9aa8; text-align:center !important;">por <a href="https://linkedin.com/in/mauroemartinez/" style="color:#bbc5d1; text-decoration:none;"><b style="color:#bbc5d1;">Mauro E. Martinez</b></a> · <a href="https://www.globalaize.com" style="color:#bbc5d1; text-decoration:none;"><b style="color:#bbc5d1;">GlobalAIze</b></a></div>
             <!-- El deck del día en el visor de Office: la rama reporte-ejecutivo siempre tiene el último,
                  publicado un minuto después de este mail. El mismo link que usa el README. -->
-            <div style="margin:8px 0 0 0; font-size:12px !important; text-align:center !important;"><a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx" style="color:#ffffff; text-decoration:none; background-color:#1f4a80; border:1px solid #a8c3db; border-radius:14px; padding:4px 12px; display:inline-block;"><b style="color:#ffffff;">📊 Ver este reporte en PowerPoint</b></a></div>
+            <div style="margin:16px 0 0 0; font-size:12px !important; text-align:center !important;"><a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx" style="color:#f0eee9; text-decoration:none; background-color:#091f45; border:1px solid #21406b; border-radius:14px; padding:6px 16px; display:inline-block;"><b style="color:#f0eee9;">📊 Ver este reporte en PowerPoint</b></a></div>
           </td>
         </tr>
 
-        <!-- BODY -->
+        <!-- CUERPO -->
         <!-- Esta celda es la que da el margen interno del informe. Sin ella el
              contenido queda suelto dentro de <table> y los clientes de mail lo
              sacan afuera, que era el motivo de que no hubiera margen lateral.
              El padding va inline porque Gmail descarta buena parte del <style>. -->
         <tr>
-          <td class="inner-pad" style="padding:26px 30px 36px 30px;">
+          <td class="inner-pad" style="padding:18px 30px 36px 30px;">
 
-            <!-- RESUMEN EJECUTIVO -->
-            <p style="margin:0 0 15px 0; font-size:14px !important; color:#163a6b;">📅 <b>RESUMEN EJECUTIVO DE MERCADO</b></p>
+            <!-- RESUMEN EJECUTIVO: una tarjeta, tres bloques -->
+            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:14px 0 18px 0; border-collapse:separate;"><tr><td bgcolor="#091f45" style="background-color:#091f45; border:1px solid #21406b; border-radius:14px; padding:20px 22px; text-align:left;">
+              <p class="titulo-serif" style="margin:0 0 14px 0; font-family:'Newsreader',Georgia,serif; font-size:20px !important; color:#f0eee9; font-weight:normal;">📅 Resumen ejecutivo de mercado</p>
 
-            <div style="margin-bottom:15px;">
-              <span style="font-size:11px; color:#5d6d7e; text-transform:uppercase;">💰 Oportunidad de Arbitraje (Cupo USD {{ cantidad_usd }})</span><br>
-              • Costo Blue: <span style="color:#c0392b; font-weight:bold;">$ {{ '{:,.2f}'.format(costo_blue) }}</span><br>
-              • Costo Oficial (impuestos inc.): $ {{ '{:,.2f}'.format(costo_oficial) }}<br>
-              • <b>{{ label_ahorro }}: <span style="color:{{ color_ahorro }}; font-size:14px;">$ {{ '{:,.2f}'.format(ahorro_valor) }}</span></b>
-            </div>
+              <div style="margin-bottom:15px;">
+                <span style="font-size:11px !important; color:#0da4cf; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">💰 Oportunidad de Arbitraje (Cupo USD {{ cantidad_usd }})</span><br>
+                • Costo Blue: <span style="color:#ef6661; font-weight:bold;">$ {{ '{:,.2f}'.format(costo_blue) }}</span><br>
+                • Costo Oficial (impuestos inc.): <span style="color:#f0eee9;">$ {{ '{:,.2f}'.format(costo_oficial) }}</span><br>
+                • <b style="color:#f0eee9;">{{ label_ahorro }}: <span style="color:{{ color_ahorro }}; font-size:14px !important;">$ {{ '{:,.2f}'.format(ahorro_valor) }}</span></b>
+              </div>
 
-            <div style="margin-bottom:15px;">
-              <span style="font-size:11px; color:#5d6d7e; text-transform:uppercase;">📊 Variaciones y Brechas</span><br>
-              • Dólar Blue 💵: <b>{{ '{:.2f}'.format(var_blue) }}%</b> (Brecha: {{ '{:.2f}'.format(brecha_solidario) }}%)<br>
-              • Dólar Divisas: {{ '{:.2f}'.format(var_divisas) }}%<br>
-              • Euro Blue 💶: {{ '{:.2f}'.format(var_euro) }}% (Brecha c/ Dólar Blue: {{ '{:.2f}'.format(brecha_euro_blue) }}%)
-            </div>
+              <div style="margin-bottom:15px;">
+                <span style="font-size:11px !important; color:#0da4cf; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">📊 Variaciones y Brechas</span><br>
+                • Dólar Blue 💵: <b style="color:#f0eee9;">{{ '{:.2f}'.format(var_blue) }}%</b> (Brecha: {{ '{:.2f}'.format(brecha_solidario) }}%)<br>
+                • Dólar Divisas: <span style="color:#f0eee9;">{{ '{:.2f}'.format(var_divisas) }}%</span><br>
+                • Euro Blue 💶: <span style="color:#f0eee9;">{{ '{:.2f}'.format(var_euro) }}%</span> (Brecha c/ Dólar Blue: {{ '{:.2f}'.format(brecha_euro_blue) }}%)
+              </div>
 
-            <div style="margin-bottom:20px;">
-              <span style="font-size:11px; color:#5d6d7e; text-transform:uppercase;">🔮 Proyecciones y Riesgo</span><br>
-              • Fwd Oficial: <b>$ {{ '{:,.2f}'.format(fwd_oficial) }}</b> | Fwd Blue 💸: <b>$ {{ '{:,.2f}'.format(fwd_blue) }}</b><br>
-              • Riesgo País ☣️: <b>{{ '{:,.0f}'.format(riesgo_pts) }} pts</b> (Sobretasa: {{ '{:.2f}'.format(sobretasa) }}%)
-            </div>
+              <div style="margin-bottom:0;">
+                <span style="font-size:11px !important; color:#0da4cf; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">🔮 Proyecciones y Riesgo</span><br>
+                • Fwd Oficial: <b style="color:#f0eee9;">$ {{ '{:,.2f}'.format(fwd_oficial) }}</b> | Fwd Blue 💸: <b style="color:#f0eee9;">$ {{ '{:,.2f}'.format(fwd_blue) }}</b><br>
+                • Riesgo País ☣️: <b style="color:#f0eee9;">{{ '{:,.0f}'.format(riesgo_pts) }} pts</b> (Sobretasa: {{ '{:.2f}'.format(sobretasa) }}%)
+              </div>
+            </td></tr></table>
 
             <!-- PÁRRAFO IA -->
-            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:20px 0; border-collapse:separate;"><tr><td class="ai-box" bgcolor="#081e40" style="background-color:#081e40; background:linear-gradient(135deg,#081e40 0%,#163a6b 100%); border:1px solid #23426e; border-left:4px solid #697e91; border-radius:6px; padding:16px 18px; text-align:left;">
-              <div class="ai-label" style="font-size:11px; color:#a8c3db; text-transform:uppercase; letter-spacing:0.5px; font-weight:bold; margin-bottom:8px;">🤖 Análisis IA · Gemini</div>
-              <p style="color:#ecf0f1 !important; font-size:13px !important; line-height:1.7; margin:0;">{{ parrafo_ia | e }}</p>
+            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:0 0 20px 0; border-collapse:separate;"><tr><td class="ai-box" bgcolor="#091f45" style="background-color:#091f45; border:1px solid #21406b; border-radius:14px; padding:18px 22px; text-align:left;">
+              <div class="ai-label" style="font-size:11px; color:#0da4cf; text-transform:uppercase; letter-spacing:1px; font-weight:bold; margin-bottom:8px;">🤖 Análisis IA · Gemini</div>
+              <p style="color:#f0eee9 !important; font-size:13px !important; line-height:1.7; margin:0;">{{ parrafo_ia | e }}</p>
             </td></tr></table>
 
             <!-- GRÁFICOS -->
@@ -145,17 +116,17 @@
                 no de HTML para que no viaje en el mail. #}
             <div style="text-align:center; width:100%; margin:20px 0;">
               {%- for cid in graficos | default(['image1', 'image2', 'image3', 'image4', 'image5', 'image6', 'image7']) %}
-              <img src='cid:{{ cid }}' class="grafico" style="max-width:100%; height:auto; display:block; margin:0 auto 18px auto; border:1px solid #dcdde1; border-radius:4px; box-shadow:0 2px 6px rgba(8,30,64,0.16);">
+              <img src='cid:{{ cid }}' class="grafico" style="max-width:100%; height:auto; display:block; margin:0 auto 14px auto; border:0; border-radius:14px;">
               {#- Comentarios de Gemini sobre este gráfico (fase 4). Sin comentarios no
                   se agrega nada, ni siquiera un salto de línea. #}
               {%- for titulo, texto in (comentarios or {}).get(cid, []) %}
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:0 0 18px 0; border-collapse:separate;"><tr><td class="comentario-ia" bgcolor="#081e40" style="background-color:#081e40; background:linear-gradient(135deg,#081e40 0%,#163a6b 100%); border:1px solid #23426e; border-left:4px solid #697e91; border-radius:6px; padding:16px 18px; text-align:left;"><div class="ai-label" style="font-size:11px; color:#a8c3db; text-transform:uppercase; letter-spacing:0.5px; font-weight:bold; margin-bottom:8px;">🤖 {{ titulo | e }}</div><p style="color:#ecf0f1 !important; font-size:13px !important; line-height:1.7; margin:0;">{{ texto | e }}</p></td></tr></table>
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:0 0 18px 0; border-collapse:separate;"><tr><td class="comentario-ia" bgcolor="#091f45" style="background-color:#091f45; border:1px solid #21406b; border-radius:14px; padding:16px 22px; text-align:left;"><div class="ai-label" style="font-size:11px; color:#0da4cf; text-transform:uppercase; letter-spacing:1px; font-weight:bold; margin-bottom:8px;">🤖 {{ titulo | e }}</div><p style="color:#f0eee9 !important; font-size:13px !important; line-height:1.7; margin:0;">{{ texto | e }}</p></td></tr></table>
               {%- endfor %}
               {#- Explicación para no especialistas de los gráficos de agregados y deuda:
                   un texto fijo y una frase con los últimos datos, calculada en Python. #}
               {%- set explicacion = (explicaciones or {}).get(cid) %}
               {%- if explicacion %}
-              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:0 0 18px 0; border-collapse:separate;"><tr><td class="explicacion" bgcolor="#081e40" style="background-color:#081e40; background:linear-gradient(135deg,#081e40 0%,#163a6b 100%); border:1px solid #23426e; border-left:4px solid #697e91; border-radius:6px; padding:16px 18px; text-align:left;"><div class="ai-label" style="font-size:11px; color:#a8c3db; text-transform:uppercase; letter-spacing:0.5px; font-weight:bold; margin-bottom:8px;">💡 {{ explicacion.titulo | e }}</div>{%- for parrafo in explicacion.texto.split("\n") %}<p style="color:#ecf0f1 !important; font-size:13px !important; line-height:1.7; margin:0;{% if not loop.first %} margin-top:10px;{% endif %}">{{ parrafo | e }}</p>{%- endfor %}{%- if explicacion.dato %}{%- for renglon in explicacion.dato.split("\n") %}<p style="color:#ffffff !important; font-size:13px !important; line-height:1.7; margin:10px 0 0 0; font-weight:bold;">📌 {{ renglon | e }}</p>{%- endfor %}{%- endif %}</td></tr></table>
+              <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:0 0 18px 0; border-collapse:separate;"><tr><td class="explicacion" bgcolor="#091f45" style="background-color:#091f45; border:1px solid #21406b; border-radius:14px; padding:16px 22px; text-align:left;"><div class="ai-label" style="font-size:11px; color:#0da4cf; text-transform:uppercase; letter-spacing:1px; font-weight:bold; margin-bottom:8px;">💡 {{ explicacion.titulo | e }}</div>{%- for parrafo in explicacion.texto.split("\n") %}<p style="color:#bbc5d1 !important; font-size:13px !important; line-height:1.7; margin:0;{% if not loop.first %} margin-top:10px;{% endif %}">{{ parrafo | e }}</p>{%- endfor %}{%- if explicacion.dato %}{%- for renglon in explicacion.dato.split("\n") %}<p style="color:#f0eee9 !important; font-size:13px !important; line-height:1.7; margin:10px 0 0 0; font-weight:bold;">📌 {{ renglon | e }}</p>{%- endfor %}{%- endif %}</td></tr></table>
               {%- endif %}
               {%- endfor %}
             </div>
@@ -163,94 +134,84 @@
             <!-- PRESENTACIÓN: la rama reporte-ejecutivo tiene siempre la del último día. El link
                  principal la abre en el visor online de Office (GitHub no muestra .pptx);
                  la corrida la publica unos segundos después de mandar el mail. -->
-            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:0 0 14px 0;"><tr>
-              <td align="center" bgcolor="#081e40" style="background-color:#081e40; border-radius:6px; padding:14px 16px; text-align:center;">
-                <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx" style="color:#a8c3db; text-decoration:none; font-weight:bold; font-size:14px;"><span style="color:#a8c3db; font-size:14px !important; font-weight:bold;">📊 Ver la presentación ejecutiva del día</span></a><br>
-                <a href="https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/raw/reporte-ejecutivo/Reporte%20Ejecutivo.pptx" style="color:#ecf0f1; text-decoration:underline; font-size:11px;"><span style="color:#ecf0f1; font-size:11px !important;">o descargala en PowerPoint</span></a>
+            <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%; margin:0 0 14px 0; border-collapse:separate;"><tr>
+              <td align="center" bgcolor="#091f45" style="background-color:#091f45; border:1px solid #21406b; border-radius:14px; padding:16px; text-align:center;">
+                <a href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fmauroemartinez%2FRPA-exchange-rate-scraping-automatic-mailing%2Freporte-ejecutivo%2FReporte%2520Ejecutivo.pptx" style="color:#0da4cf; text-decoration:none; font-weight:bold; font-size:14px;"><span style="color:#0da4cf; font-size:14px !important; font-weight:bold;">📊 Ver la presentación ejecutiva del día</span></a><br>
+                <a href="https://github.com/mauroemartinez/RPA-exchange-rate-scraping-automatic-mailing/raw/reporte-ejecutivo/Reporte%20Ejecutivo.pptx" style="color:#bbc5d1; text-decoration:underline; font-size:11px;"><span style="color:#bbc5d1; font-size:11px !important;">o descargala en PowerPoint</span></a>
               </td>
             </tr></table>
 
             <!-- APOYO: después de los gráficos, donde todavía se lee -->
-            <div class="apoyo" style="margin:0 0 22px 0; padding:12px 16px; background-color:#e7f2f8; border:1px solid #cfe2ee; border-radius:6px;">
-              <span style="font-size:13px; color:#163a6b;">☕ ¿Te sirvió el reporte? Podés apoyar el proyecto al alias <b style="color:#163a6b;">mauroemartinezmp</b></span>
+            <div class="apoyo" style="margin:0 0 26px 0; padding:12px 18px; background-color:#091f45; border:1px solid #21406b; border-radius:14px;">
+              <span style="font-size:13px; color:#bbc5d1;">☕ ¿Te sirvió el reporte? Podés apoyar el proyecto al alias <b style="color:#f0eee9;">mauroemartinezmp</b></span>
             </div>
 
             <!-- TABLA COTIZACIONES -->
-            <p style="color:#163a6b;">📊 <b><u>Monitoreo de Mercado:</u></b><br>
-            Las siguientes tablas muestran las últimas {{ cotizaciones_a_mostrar }} cotizaciones de dólares, euro, riesgo país y las tasas de referencia (BCRA 🇦🇷 y FED 🇺🇸).<br>
+            <p class="titulo-serif" style="margin:0 0 6px 0; font-family:'Newsreader',Georgia,serif; font-size:20px !important; color:#f0eee9; font-weight:normal;">📊 Monitoreo de Mercado:</p>
+            <p style="color:#bbc5d1; margin:0;">Las siguientes tablas muestran las últimas {{ cotizaciones_a_mostrar }} cotizaciones de dólares, euro, riesgo país y las tasas de referencia (BCRA 🇦🇷 y FED 🇺🇸).<br>
             Analizalas tranquilo mientras te cebás unos mates 🧉:</p>
             <div class="table-wrapper tabla-cotizaciones" style="width:100%; overflow-x:auto;">{{ tabla_cotizaciones | safe }}</div>
 
             <!-- TABLA VARIACIONES -->
-            <p style="color:#163a6b; margin-top:20px;">🔄 <b><u>Brechas y Variaciones:</u></b><br>
-            Acá podés ver cómo se están moviendo los arbitrajes entre los distintos tipos de cambio y qué tanto terreno ganó o perdió cada uno en las últimas jornadas.</p>
+            <p class="titulo-serif" style="margin:24px 0 6px 0; font-family:'Newsreader',Georgia,serif; font-size:20px !important; color:#f0eee9; font-weight:normal;">🔄 Brechas y Variaciones:</p>
+            <p style="color:#bbc5d1; margin:0;">Acá podés ver cómo se están moviendo los arbitrajes entre los distintos tipos de cambio y qué tanto terreno ganó o perdió cada uno en las últimas jornadas.</p>
             <div class="table-wrapper tabla-variaciones" style="width:100%; overflow-x:auto;">{{ tabla_variaciones | safe }}</div>
 
             <!-- TABLA INFLACIÓN -->
-            <p style="color:#163a6b; margin-top:20px;">📈 <b><u>Termómetro de Inflación:</u></b><br>
-            La siguiente tabla muestra las últimas 12 publicaciones del IPC. Tené en cuenta que la <b>inflación interanual es del {{ inflacion_interanual }}</b>:</p>
+            <p class="titulo-serif" style="margin:24px 0 6px 0; font-family:'Newsreader',Georgia,serif; font-size:20px !important; color:#f0eee9; font-weight:normal;">📈 Termómetro de Inflación:</p>
+            <p style="color:#bbc5d1; margin:0;">La siguiente tabla muestra las últimas 12 publicaciones del IPC. Tené en cuenta que la <b style="color:#f0eee9;">inflación interanual es del {{ inflacion_interanual }}</b>:</p>
             <div class="table-wrapper tabla-inflacion" style="width:100%; overflow-x:auto;">{{ tabla_inflacion | safe }}</div>
 
             <!-- FUENTES -->
-            <div style="margin-top:30px; font-size:12px; color:#7f8c8d; border-top:1px solid #eee; padding-top:15px;">
-              <p style="overflow-wrap:anywhere; word-break:break-word;"><b><u>📚 Las fuentes consultadas fueron:</u></b><br>
-              <b>Cotizaciones oficiales: </b>{{ web_bna }}<br>
-              <b>Cotizaciones paralelas: </b>{{ web_dolarhoy }}<br>
-              <b>Cotización Dólar MEP: </b>{{ web_mep }}<br>
-              <b>Riesgo País: </b>{{ api_riesgo_pais }}<br>
-              <b>Cotización Euro Blue: </b>{{ web_euro }}<br>
-              <b>Tasa Efectiva Anual EEUU: </b>{{ fed_api_url }}<br>
-              <b>Tasa Efectiva Anual e Inflación Mensual argentina: </b>{{ bcra_api_url }}<br>
+            <div style="margin-top:30px; font-size:12px; color:#8d9aa8; border-top:1px solid #21406b; padding-top:15px;">
+              <p style="overflow-wrap:anywhere; word-break:break-word; color:#8d9aa8; margin:0;"><b style="color:#bbc5d1;">📚 Las fuentes consultadas fueron:</b><br>
+              <b style="color:#bbc5d1;">Cotizaciones oficiales: </b>{{ web_bna }}<br>
+              <b style="color:#bbc5d1;">Cotizaciones paralelas: </b>{{ web_dolarhoy }}<br>
+              <b style="color:#bbc5d1;">Cotización Dólar MEP: </b>{{ web_mep }}<br>
+              <b style="color:#bbc5d1;">Riesgo País: </b>{{ api_riesgo_pais }}<br>
+              <b style="color:#bbc5d1;">Cotización Euro Blue: </b>{{ web_euro }}<br>
+              <b style="color:#bbc5d1;">Tasa Efectiva Anual EEUU: </b>{{ fed_api_url }}<br>
+              <b style="color:#bbc5d1;">Tasa Efectiva Anual e Inflación Mensual argentina: </b>{{ bcra_api_url }}<br>
               {%- if fuente_deuda %}
-              <b>Agregados monetarios, deuda del BCRA y dólar mayorista: </b>{{ bcra_api_url }}<br>
-              <b>Deuda bruta del Tesoro: </b>{{ fuente_deuda }}<br>
+              <b style="color:#bbc5d1;">Agregados monetarios, deuda del BCRA y dólar mayorista: </b>{{ bcra_api_url }}<br>
+              <b style="color:#bbc5d1;">Deuda bruta del Tesoro: </b>{{ fuente_deuda }}<br>
               {%- endif %}
-              <b>Bitcoin: </b>finance.yahoo.com</p>
+              <b style="color:#bbc5d1;">Bitcoin: </b>finance.yahoo.com</p>
             </div>
 
             <!-- CIERRE -->
-            <div style="margin-top:30px; border-top:1px solid #dcdde1; padding-top:20px;">
-              <p style="font-size:14px !important; color:#163a6b;">🤓 Muchas gracias por leer,<br>
+            <div style="margin-top:30px; border-top:1px solid #21406b; padding-top:22px;">
+              <p style="font-size:14px !important; color:#bbc5d1; margin:0 0 4px 0;">🤓 Muchas gracias por leer,<br>
               🤑 Ojalá esta información te sea de gran utilidad para tus decisiones.</p>
 
-              <!-- Todo el cierre vive dentro de este recuadro.
-                   El gris pasa de #f8f9fa a #e7f2f8: el anterior era 97% blanco y sobre
-                   el fondo del informe no se distinguía, así que la zona no se leía como
-                   zona. Con el borde sutil queda delimitada.
-                   Contraste medido sobre #e7f2f8: #4d5a68 da 6.22:1 y #163a6b 9.69:1,
-                   los dos por encima del 4.5:1 que pide WCAG AA para texto chico.
-                   El #bdc3c7 que estaba antes daba 1.69:1, ilegible. -->
-              <div style="background-color:#e7f2f8; border:1px solid #cfe2ee; padding:18px 20px; border-radius:8px; margin:20px 0 0 0;">
-                <p style="margin:0 0 10px 0;">
-                  <a href="https://linkedin.com/in/mauroemartinez/" style="text-decoration:none; color:#0077b5;"><b style="color:#0077b5;">LinkedIn</b></a>
-                  | <a href="https://github.com/mauroemartinez/" style="text-decoration:none; color:#24292e;"><b style="color:#24292e;">GitHub</b></a>
+              <!-- Todo el cierre vive dentro de esta tarjeta, con el mismo azul y borde que las demás. -->
+              <div style="background-color:#091f45; border:1px solid #21406b; padding:20px 22px; border-radius:14px; margin:20px 0 0 0;">
+                <p style="margin:0 0 12px 0;">
+                  <a href="https://linkedin.com/in/mauroemartinez/" style="text-decoration:none; color:#0da4cf;"><b style="color:#0da4cf;">LinkedIn</b></a>
+                  <span style="color:#8d9aa8;">|</span> <a href="https://github.com/mauroemartinez/" style="text-decoration:none; color:#f0eee9;"><b style="color:#f0eee9;">GitHub</b></a>
                 </p>
-                <p style="margin:0 0 10px 0;">
-                  <img src="cid:icono" width="28" height="28" alt="GlobalAIze" style="width:28px; height:28px; vertical-align:middle; border-radius:5px; margin-right:4px;"> <b style="color:#163a6b;">GlobalAIze:</b>
-                  <a href="https://www.globalaize.com" style="text-decoration:none; color:#1f6391;"><b style="color:#1f6391;">www.globalaize.com</b></a>
-                  | <a href="https://www.linkedin.com/company/globalaize" style="text-decoration:none; color:#0077b5;"><b style="color:#0077b5;">LinkedIn</b></a>
+                <p style="margin:0 0 14px 0;">
+                  <img src="cid:icono" height="30" alt="GlobalAIze" style="height:30px; width:auto; vertical-align:middle; margin-right:8px; border:0;"> <b style="color:#f0eee9;">GlobalAIze:</b>
+                  <a href="https://www.globalaize.com" style="text-decoration:none; color:#0da4cf;"><b style="color:#0da4cf;">www.globalaize.com</b></a>
+                  <span style="color:#8d9aa8;">|</span> <a href="https://www.linkedin.com/company/globalaize" style="text-decoration:none; color:#0da4cf;"><b style="color:#0da4cf;">LinkedIn</b></a>
                 </p>
 
                 <!-- La invitación comercial, con las mismas palabras que la sección de
                      contacto de globalaize.com: una charla de 30 minutos y después una prueba gratuita. -->
-                <p style="margin:0 0 10px 0; font-size:13px !important; color:#163a6b; line-height:1.6;">
-                  <b>¿Qué tarea le quita más tiempo a tu equipo?</b><br>
-                  En GlobalAIze estamos abiertos a una <b>charla gratuita de 30 minutos</b> sobre tu operación, para ver
+                <p style="margin:0 0 14px 0; font-size:13px !important; color:#bbc5d1; line-height:1.6;">
+                  <b style="color:#f0eee9;">¿Qué tarea le quita más tiempo a tu equipo?</b><br>
+                  En GlobalAIze estamos abiertos a una <b style="color:#f0eee9;">charla gratuita de 30 minutos</b> sobre tu operación, para ver
                   dónde entran la IA, la analítica y la automatización en tu empresa. Después, una prueba gratuita: si te gusta
                   y considerás que es para tu empresa, la conectamos a tus herramientas y medimos cuánto tiempo ahorrás.
-                  También damos <b>tutorías</b> para quien quiera aprender a construir estas herramientas, como este mismo reporte.<br>
-                  <a href="https://wa.me/5491159909647?text=Hola%20GlobalAIze%2C%20leo%20el%20reporte%20macro%20y%20quiero%20coordinar%20una%20charla%20gratuita." style="color:#1f6391; text-decoration:underline; font-weight:bold;">Escribinos por WhatsApp</a>
-                  | <a href="https://www.globalaize.com/#contacto" style="color:#1f6391; text-decoration:underline; font-weight:bold;">globalaize.com/#contacto</a>
+                  También damos <b style="color:#f0eee9;">tutorías</b> para quien quiera aprender a construir estas herramientas, como este mismo reporte.<br>
+                  <a href="https://wa.me/5491159909647?text=Hola%20GlobalAIze%2C%20leo%20el%20reporte%20macro%20y%20quiero%20coordinar%20una%20charla%20gratuita." style="color:#0da4cf; text-decoration:underline; font-weight:bold;">Escribinos por WhatsApp</a>
+                  <span style="color:#8d9aa8;">|</span> <a href="https://www.globalaize.com/#contacto" style="color:#0da4cf; text-decoration:underline; font-weight:bold;">globalaize.com/#contacto</a>
                 </p>
 
-                <!-- Sin separador ni padding entre esta línea y la anterior: la
-                     línea divisoria mas el margen abrian un renglon en blanco.
-                     Mismo tamaño, mismo estilo y sin cursivas en las tres líneas.
-                     Solo el nombre y el mail van en negrita. -->
-                <div style="font-size:11px !important; color:#4d5a68; line-height:1.6;">
-                  🤖 Este es un proceso de RPA desarrollado íntegramente en Python por <b style="color:#163a6b;">Mauro E. Martinez</b>.<br>
+                <div style="font-size:11px !important; color:#8d9aa8; line-height:1.6;">
+                  🤖 Este es un proceso de RPA desarrollado íntegramente en Python por <b style="color:#f0eee9;">Mauro E. Martinez</b>.<br>
                   ⏱️ Performance: el script procesó los datos y generó este envío en {{ '{:.2f}'.format(performance_segundos) }} segundos.<br>
-                  📧 Consultas, desuscripciones o propuestas: <a href="mailto:mauro@globalaize.com" style="color:#163a6b; text-decoration:underline; font-weight:bold;">mauro@globalaize.com</a>
+                  📧 Consultas, desuscripciones o propuestas: <a href="mailto:mauro@globalaize.com" style="color:#0da4cf; text-decoration:underline; font-weight:bold;">mauro@globalaize.com</a>
                 </div>
               </div>
             </div>

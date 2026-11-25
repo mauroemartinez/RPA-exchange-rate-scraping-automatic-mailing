@@ -26,8 +26,8 @@ def imagenes():
 
 
 def test_pintar_variacion():
-    assert "#1e8449" in er.pintar_variacion(0.012) and "1.20%" in er.pintar_variacion(0.012)
-    assert "#c0392b" in er.pintar_variacion(-0.005)
+    assert "#62d286" in er.pintar_variacion(0.012) and "1.20%" in er.pintar_variacion(0.012)
+    assert "#ef6661" in er.pintar_variacion(-0.005)
     assert er.pintar_variacion("n/d") == "n/d"
 
 
@@ -190,7 +190,7 @@ def test_las_tarjetas_de_ia_y_explicaciones_tienen_el_mismo_look(df, inflacion_1
                          comentarios=comentarios, explicaciones=explicaciones)
     for clase in ('class="ai-box"', 'class="comentario-ia"', 'class="explicacion"'):
         caja = html[html.index(clase):html.index(clase) + 400]
-        assert "#081e40" in caja and "border-left:4px solid #697e91" in caja
+        assert "#091f45" in caja and "border-left" not in caja  # tarjeta mate de la marca, sin raya de acento
     # Cada renglón del texto y del dato, en su propio párrafo
     assert ">Uno</p>" in html and ">Dos</p>" in html and "📌 Dato A</p>" in html and "📌 Dato B</p>" in html
 

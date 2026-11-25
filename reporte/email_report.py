@@ -34,9 +34,9 @@ log = logging.getLogger(__name__)
 RAIZ = Path(__file__).resolve().parent
 # El logo de GlobalAIze va adjunto inline como los gráficos (cid:logo), no por URL:
 # así se ve aunque el cliente bloquee las imágenes remotas
-LOGO = RAIZ / "recursos" / "globalaize_logo.png"  # el logo completo, para el encabezado
+LOGO = RAIZ / "recursos" / "marca" / "logos" / "globalaize-logo-horizontal-es-dark-1024.png"  # el logo completo claro, sobre el fondo oscuro del mail
 CID_LOGO = "logo"
-ICONO = RAIZ / "recursos" / "globalaize.png"  # la marca sola, para el pie, donde el logo completo no se lee
+ICONO = RAIZ / "recursos" / "marca" / "logos" / "globalaize-mark-dark-1024.png"  # la marca sola (el barco), para el pie, donde el logo completo no se lee
 CID_ICONO = "icono"
 
 # Cupo de dólares del resumen ejecutivo (costo blue contra oficial)
@@ -54,12 +54,11 @@ NOMBRE_ADJUNTO_CSV = "Seguimiento Macroeconómico"
 
 
 def pintar_variacion(valor):
-    """Verde si sube, rojo si baja. #1e8449 y no #27ae60: el segundo da 2.87:1 sobre
-    blanco y no llega al 4.5:1 que pide WCAG AA. Es el mismo verde del gráfico de
-    riesgo país."""
+    """Verde si sube, rojo si baja, los de estado de la marca (#62D286 y #EF6661), que sobre el azul oscuro
+    del mail pasan con holgura el 4.5:1 que pide WCAG AA para texto chico."""
     try:
         val_num = float(valor)
-        color = "#1e8449" if val_num > 0 else "#c0392b"
+        color = "#62d286" if val_num > 0 else "#ef6661"
         return f'<span style="color: {color}; font-weight: bold;">{val_num:.2%}</span>'
     except (TypeError, ValueError):
         return valor
@@ -136,7 +135,7 @@ def resumen_ejecutivo(df: pd.DataFrame) -> dict:
         "costo_blue": costo_blue,
         "costo_oficial": costo_oficial,
         "ahorro_valor": ahorro_valor,
-        "color_ahorro": "#1e8449" if ahorro_valor > 0 else "#c0392b",
+        "color_ahorro": "#62d286" if ahorro_valor > 0 else "#ef6661",
         "label_ahorro": "Ahorro estimado" if ahorro_valor > 0 else "Sobrecosto estimado",
         "var_blue": float((df["TCV_Blue"].iloc[0] / df["TCV_Blue"].iloc[1] - 1) * 100),
         "brecha_solidario": float((1 - df["Solidario"].iloc[0] / df["TCV_Blue"].iloc[0]) * 100),
@@ -201,6 +200,7 @@ def contexto_template(
     if graficos is None:
         graficos = [f"image{i + 1}" for i in range(len(ORDEN_EN_MAIL))]
     return dict(
+        fecha_reporte=pd.to_datetime(df["Fecha"].iloc[0]).strftime("%d/%m/%Y"),
         **resumen_ejecutivo(df_mail),
         fwd_oficial=fwd_oficial,
         fwd_blue=fwd_blue,
