@@ -24,6 +24,8 @@ from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+import streamlit.components.v1 as componentes
+from plotly.offline import get_plotlyjs_version
 
 AQUI = Path(__file__).resolve().parent
 DATOS = AQUI / "data"
@@ -75,8 +77,8 @@ TEXTOS = {
         "fuente": "Fuente", "aporta": "Qué aporta",
         "nota_fuentes": "Cada valor se guarda con la fecha y la unidad de su fuente. Cómo se consigue y se valida cada serie "
                         "está en el <a href=\"{repo}\" target=\"_blank\">repositorio</a>.",
-        "pie": "Hecho por <a href=\"https://www.globalaize.com\" target=\"_blank\">GlobalAIze</a>: agentes de IA, "
-               "automatizaciones y análisis de datos. Código abierto en <a href=\"{repo}\" target=\"_blank\">GitHub</a>.",
+        "pie": "Globalizate con <a href=\"https://www.globalaize.com\" target=\"_blank\">GlobalAIze</a>. "
+               "Código abierto en <a href=\"{repo}\" target=\"_blank\">GitHub</a>.",
         "sin_datos": "No hay datos para mostrar.",
         "min": "mín.", "max": "máx.",
         "billones": "billones de $", "usd_bn": "miles de millones de USD",
@@ -117,8 +119,8 @@ TEXTOS = {
         "fuente": "Source", "aporta": "What it provides",
         "nota_fuentes": "Every value is stored with its source's date and unit. How each series is collected and validated "
                         "is explained in the <a href=\"{repo}\" target=\"_blank\">repository</a>.",
-        "pie": "Made by <a href=\"https://www.globalaize.com\" target=\"_blank\">GlobalAIze</a>: AI agents, automation and "
-               "data analysis. Open source on <a href=\"{repo}\" target=\"_blank\">GitHub</a>.",
+        "pie": "Go global with <a href=\"https://www.globalaize.com/en/\" target=\"_blank\">GlobalAIze</a>. "
+               "Open source on <a href=\"{repo}\" target=\"_blank\">GitHub</a>.",
         "sin_datos": "No data to show.",
         "min": "low", "max": "high",
         "billones": "ARS trillion", "usd_bn": "USD billion",
@@ -224,6 +226,15 @@ else:
     )
 
 
+BANDERAS = {
+    "es": '<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#74ACDF"/>'
+          '<rect y="6.67" width="30" height="6.66" fill="#fff"/><circle cx="15" cy="10" r="2.2" fill="#F6B40E"/></svg>',
+    "en": '<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#B22234"/>'
+          + "".join(f'<rect y="{i * 20 / 13 * 2 + 20 / 13:.3f}" width="30" height="{20 / 13:.3f}" fill="#fff"/>' for i in range(6))
+          + '<rect width="12" height="10.77" fill="#3C3B6E"/></svg>',
+}
+
+
 def _logo() -> str:
     archivo = AQUI / "assets" / C["logo"].format(idioma=IDIOMA)
     return base64.b64encode(archivo.read_bytes()).decode()
@@ -256,6 +267,12 @@ def _estilos() -> None:
   .encabezado img { height: 52px; width: auto; display: block; }
   .encabezado .titulo { font-size: 2.2rem; color: @tinta; line-height: 1.05; margin: 0; }
   @media (max-width: 900px) { .encabezado { flex-wrap: wrap; } .encabezado .titulo { font-size: 1.7rem; } }
+  .idiomas { display: inline-flex; border: 1px solid @borde; border-radius: 8px; overflow: hidden; background: @vidrio; }
+  .idiomas a { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; color: @tinta !important;
+               text-decoration: none !important; font-size: 0.9rem; border: 1px solid transparent; }
+  .idiomas a + a { border-left-color: @borde; }
+  .idiomas a.activo { color: @acento !important; border-color: @acento; border-radius: 8px; }
+  .idiomas svg { width: 20px; height: 14px; border-radius: 2px; box-shadow: 0 0 0 1px rgb(0 0 0 / .15); flex: none; }
   .bajada { color: @secundario; font-size: 0.92rem; margin: 10px 0 14px; }
   /* Vidrio de la marca: tinte, desenfoque, canto de luz fino (más claro arriba a la izquierda
      y abajo a la derecha), sin brillo, sombra suave y radio 14. */
@@ -483,7 +500,7 @@ def barras(series: dict, *, prefijo="", sufijo="", dec=1, linea: dict | None = N
         indice = s.index if indice is None else indice.union(s.index)
         fig.add_trace(go.Bar(x=s.index, y=s.values, name=nombre, marker_color=C["series"][i % len(C["series"])],
                              text=[f"{prefijo}{num(v, dec)}{sufijo}" for v in s.values], textposition="outside",
-                             textfont=dict(color=C["tinta"], size=11), cliponaxis=False,
+                             textfont=dict(color=C["tinta"], size=13), cliponaxis=False,
                              hovertemplate=f"{nombre}: {prefijo}%{{y:,.{dec}f}}{sufijo}<extra></extra>"))
     rango = _rango(valores, nunca_negativo=True, incluir_cero=True)
     if rango:
@@ -517,6 +534,51 @@ def mostrar(fig: go.Figure) -> None:
     st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
 
+PLOTLY_JS = get_plotlyjs_version()  # la misma versión de Plotly.js que trae la librería de Python
+ANCHO_POR_BARRA = 76  # lo que pide la etiqueta más larga ("US$ 489,6") y el mes del eje, sin pisarse
+
+
+def mostrar_barras(fig: go.Figure) -> None:
+    """Barras mensuales con un ancho mínimo por barra. Si no entran en la pantalla, el gráfico
+    se desplaza de costado y arranca corrido del todo a la derecha, en el último mes."""
+    meses = max((len(t.x) for t in fig.data if t.type == "bar"), default=0)
+    ancho_minimo = meses * ANCHO_POR_BARRA + 110  # 110: los márgenes y la etiqueta de la línea a la derecha
+    alto = fig.layout.height or 430
+    # Al desplazar, el eje y queda fuera de la vista: cada barra ya lleva su valor, así que se ocultan
+    # los números del eje (la grilla queda). Abajo, lugar fijo para los meses.
+    fig.update_yaxes(showticklabels=False, ticks="", title=None)
+    con_linea = any(t.type == "scatter" for t in fig.data)  # la línea lleva su último valor a la derecha
+    fig.update_layout(margin=dict(l=12, r=90 if con_linea else 16, t=40, b=48), yaxis2=dict(showticklabels=False, ticks=""))
+    fig.update_xaxes(automargin=True, tickfont=dict(size=13))
+    fig.update_layout(height=alto, autosize=True, width=None)
+    componentes.html(f"""
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-{PLOTLY_JS}.min.js" charset="utf-8"></script>
+<style>
+  html, body {{ margin: 0; background: transparent; font-family: "IBM Plex Sans", system-ui, sans-serif; }}
+  .marco {{ background: {C["vidrio"]}; border: 1.5px solid {C["borde"]}; border-radius: 14px; overflow: hidden; }}
+  .desliza {{ overflow-x: auto; overflow-y: hidden; scrollbar-color: {C["eje"]} transparent; }}
+  .ancho {{ min-width: {ancho_minimo}px; height: {alto}px; }}
+</style>
+<div class="marco"><div class="desliza" id="desliza"><div class="ancho" id="grafico"></div></div></div>
+<script>
+  const fig = {fig.to_json()};
+  const caja = document.getElementById("desliza"), destino = document.getElementById("grafico");
+  const alFinal = () => {{ caja.scrollLeft = caja.scrollWidth; }};
+  // Si la pestaña está oculta, el marco mide cero: Plotly dibujaría sin etiquetas y con la leyenda
+  // encimada. Se dibuja recién cuando tiene ancho, y se ajusta si cambia.
+  let dibujado = false, ancho = 0;
+  new ResizeObserver(() => {{
+    if (!caja.clientWidth || caja.clientWidth === ancho) return;
+    ancho = caja.clientWidth;
+    const listo = dibujado ? Plotly.Plots.resize(destino)
+      : Plotly.newPlot(destino, fig.data, fig.layout, {{displayModeBar: false, responsive: true}});
+    dibujado = true;
+    Promise.resolve(listo).then(alFinal);
+  }}).observe(caja);
+</script>""", height=alto + 22)
+
+
 def nota(texto: str) -> None:
     st.markdown(f'<div class="nota">{texto}</div>', unsafe_allow_html=True)
 
@@ -546,22 +608,23 @@ fechas_ref = {
 }
 
 # Encabezado: logo y título alineados, y a la derecha el idioma
-izquierda, botones = st.columns([6, 2], vertical_alignment="center")
+izquierda, botones = st.columns([6, 2.6], vertical_alignment="center")
 with izquierda:
     st.markdown(f'<div class="encabezado"><img src="data:image/svg+xml;base64,{_logo()}" alt="GlobalAIze">'
                 f'<div class="titulo">{T["titulo"]}</div></div>', unsafe_allow_html=True)
 with botones:
-    col_idioma, col_tema = st.columns([1, 1.3])
+    col_idioma, col_tema = st.columns([1.25, 1])
     with col_idioma:
-        elegido_idioma = st.segmented_control("Idioma / Language", ["ES", "EN"], default=IDIOMA.upper(),
-                                              label_visibility="collapsed", key="idioma")
+        # Links y no un control de Streamlit: los emojis de bandera no se ven en Windows, así que van en SVG
+        tema_url = "oscuro" if OSCURO else "claro"
+        st.markdown('<div class="idiomas">' + "".join(
+            f'<a href="?lang={codigo}&tema={tema_url}" target="_self" class="{"activo" if codigo == IDIOMA else ""}"'
+            f' aria-label="{nombre}">{BANDERAS[codigo]}<span>{codigo.upper()}</span></a>'
+            for codigo, nombre in (("es", "Español"), ("en", "English"))) + "</div>", unsafe_allow_html=True)
     with col_tema:
         oscuro, claro = T["oscuro"], T["claro"]
         elegido_tema = st.segmented_control("Tema / Theme", [oscuro, claro], default=oscuro if OSCURO else claro,
                                             label_visibility="collapsed", key=f"tema_{IDIOMA}")
-    if elegido_idioma and elegido_idioma.lower() != IDIOMA:
-        st.query_params["lang"] = elegido_idioma.lower()
-        st.rerun()
     if elegido_tema and (elegido_tema == oscuro) != OSCURO:
         st.query_params["tema"] = "oscuro" if elegido_tema == oscuro else "claro"
         st.rerun()
@@ -669,7 +732,7 @@ with pest[4]:  # Tasas
     nota(T["nota_tasas"])
 
 with pest[5]:  # Inflación
-    mostrar(barras({N["inflacion_mensual"]: recorte(inflacion, True)}, sufijo=" %",
+    mostrar_barras(barras({N["inflacion_mensual"]: recorte(inflacion, True)}, sufijo=" %",
                    linea={N["inflacion_interanual"]: recorte(interanual, True)}))
     nota(T["nota_inflacion"] + " " + T["nota_mensual"])
 
@@ -688,7 +751,7 @@ with pest[6]:  # Dinero y BCRA
 
 with pest[7]:  # Deuda
     deuda = recorte(serie_larga("deuda_bruta_tesoro"), True) / 1e3
-    mostrar(barras({N["deuda_bruta_tesoro"]: deuda}, prefijo="US$ ", dec=1, titulo_y=T["usd_bn"]))
+    mostrar_barras(barras({N["deuda_bruta_tesoro"]: deuda}, prefijo="US$ ", dec=1, titulo_y=T["usd_bn"]))
     nota(T["nota_deuda"] + " " + T["nota_mensual"])
 
 with pest[8]:  # Bitcoin
