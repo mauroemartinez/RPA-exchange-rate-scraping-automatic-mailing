@@ -39,8 +39,7 @@ async def _scrape() -> dict:
 
 
 async def run() -> dict:
-    """Scrapea TC billete y divisas de BNA. Devuelve las mismas claves que armaba
-    la celda de Selenium: TCC_Billete, TCV_Billete, TCC_Divisas, TCV_Divisas, Solidario.
+    """Scrapea TC billete y divisas de BNA. Devuelve las claves TCC_Billete, TCV_Billete, TCC_Divisas, TCV_Divisas, Solidario.
     Reintenta ante timeouts transitorios; si se agotan los reintentos, propaga un
     ScraperError con contexto en vez de fallar silenciosamente."""
     try:

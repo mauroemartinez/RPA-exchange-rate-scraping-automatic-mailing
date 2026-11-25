@@ -37,7 +37,7 @@ import time
 from pathlib import Path
 
 # Este script vive en scripts/ pero importa del proyecto, que está un nivel
-# arriba. Sin esto, 'from config import settings' solo funcionaría si se lo
+# arriba. Sin esto, 'from reporte import ...' solo funcionaría si se lo
 # ejecuta parado justo en la raíz del repo.
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))

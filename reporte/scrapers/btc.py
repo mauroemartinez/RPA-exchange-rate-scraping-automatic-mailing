@@ -1,8 +1,6 @@
 """Cotización diaria de BTC/USD desde Yahoo Finance, vía yfinance.
 
-Estaba adentro de la celda del gráfico y sin manejo de errores: si Yahoo limitaba
-las consultas, el notebook se cortaba ahí, cuatro celdas antes de mandar el mail.
-Ahora falla con un ScraperError y el pipeline sigue sin el gráfico de BTC.
+Si Yahoo limita las consultas, falla con un ScraperError y el pipeline sigue sin el gráfico de BTC.
 """
 
 from datetime import datetime

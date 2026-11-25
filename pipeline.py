@@ -1,6 +1,6 @@
-"""Corrida diaria completa, sin Jupyter. Es el reemplazo operativo del notebook.
+"""Corrida diaria completa: un script de Python, sin Jupyter.
 
-Etapas, en el mismo orden que el notebook:
+Etapas, en orden:
 
   control       fin de semana o feriado: no se corre (salvo --forzar); antes de la hora de
                 --desde (un horario programado que llegó tan tarde que cruzó la medianoche):
@@ -352,7 +352,7 @@ def _etapas(opciones: Opciones, deps: Dependencias, registro: _Registro, engine,
             if persistida:
                 e.detalle = "fila actualizada" if ya_existe else "fila insertada"
             else:
-                # Otra corrida (el notebook, o una que leyó el histórico del CSV de
+                # Otra corrida (por ejemplo, una que leyó el histórico del CSV de
                 # respaldo y no vio la fila) ya hizo el día: seguir mandaría otro mail
                 conflicto = True
                 e.estado = OMITIDA

@@ -30,10 +30,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from reporte.models import COLUMNAS_TABLA
+from reporte.models import COLUMNAS_FILA
 from reporte.transformations import ResultadosScraping
 
 HOY = date(2026, 10, 6)
+# Las columnas de la tabla: la fila del día más el párrafo de IA y el modelo que lo escribió
+COLUMNAS_TABLA = [*COLUMNAS_FILA, "ai_paragraph", "ai_model"]
 
 
 def jpeg_minimo() -> bytes:
@@ -182,3 +184,25 @@ def series_sinteticas(hoy: date = HOY) -> tuple[dict, set]:
 @pytest.fixture
 def series_indicadores() -> tuple[dict, set]:
     return series_sinteticas()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _fondo_de_vidrio_en_cache():
+    """Los tests dibujan el mismo fondo de vidrio una y otra vez (cada diapositiva y cada tarjeta de gráfico).
+
+    Dibujarlo cuesta unos 0,5 s por vez y era la mayor parte de los ~10 minutos de la suite. Con los mismos
+    paneles se reusa la imagen: los que la piden la copian (`.convert()`), nunca la modifican.
+    """
+    from reporte.marca import estilo
+
+    original, guardados = estilo.fondo_con_paneles, {}
+
+    def en_cache(ancho, alto, paneles):
+        clave = (ancho, alto, tuple(tuple(p) for p in paneles))
+        if clave not in guardados:
+            guardados[clave] = original(ancho, alto, paneles)
+        return guardados[clave]
+
+    estilo.fondo_con_paneles = en_cache
+    yield
+    estilo.fondo_con_paneles = original

@@ -1,6 +1,6 @@
 """Fecha y hora de Argentina, sin depender de la zona horaria de la máquina.
 
-El notebook estampaba la fila con dt.datetime.today(), que usa el reloj del sistema.
+Estampar la fila con dt.datetime.today() usa el reloj del sistema.
 En una PC configurada en Argentina da lo mismo, pero el contenedor corre en UTC: una
 corrida después de las 21:00 guardaba la fila con la fecha del día siguiente, sin
 ningún error. Todo el proyecto toma "hoy" de acá.

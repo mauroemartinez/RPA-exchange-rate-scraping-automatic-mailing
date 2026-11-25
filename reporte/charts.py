@@ -83,7 +83,7 @@ def _guardar(fig: Figure, carpeta: Path, nombre: str, **kwargs) -> Path:
 # ── Tipos de cambio y riesgo país ────────────────────────────────────────────
 
 def preparar_datos(df: pd.DataFrame) -> pd.DataFrame:
-    """El histórico de más viejo a más nuevo, con Fecha como texto 'dd/mm/yy' (celda 39)."""
+    """El histórico de más viejo a más nuevo, con Fecha como texto 'dd/mm/yy'."""
     data = df.copy().iloc[::-1]
     data["Fecha"] = pd.to_datetime(data["Fecha"], dayfirst=False, errors="coerce")
     data["Fecha"] = data["Fecha"].dt.strftime("%d/%m/%y")
@@ -111,11 +111,11 @@ def _step_riesgo_pais(valor_max: float) -> tuple[float, float]:
 def preparar_variaciones(
     data: pd.DataFrame, inflacion: pd.DataFrame, fecha_inicio: str = FECHA_INICIO_VARIACIONES
 ) -> pd.DataFrame:
-    """Solidario, blue e inflación acumulados desde fecha_inicio (celda 41).
+    """Solidario, blue e inflación acumulados desde fecha_inicio.
 
     `data` es la salida de preparar_datos() e `inflacion` la serie mensual que se
     cruza por fecha con las cotizaciones. Tiene que ser la serie completa, o al
-    menos cubrir desde fecha_inicio: el notebook cruzaba solo los últimos 12 meses
+    menos cubrir desde fecha_inicio: una versión anterior cruzaba solo los últimos 12 meses
     y, pasado un año desde fecha_inicio, la inflación acumulada empezaba meses
     después que el dólar (en octubre de 2026 arrancaba en septiembre de 2025
     contra julio de 2025), así que el gráfico comparaba períodos distintos.
@@ -143,7 +143,7 @@ def preparar_variaciones(
 # ── Inflación ────────────────────────────────────────────────────────────────
 
 def preparar_inflacion(inflacion_12: pd.DataFrame) -> pd.DataFrame:
-    """Los meses del gráfico, de más viejo a más nuevo, rotulados 'sep/2025' (celda 42)."""
+    """Los meses del gráfico, de más viejo a más nuevo, rotulados 'sep/2025'."""
     datos = inflacion_12.copy()
     datos["Fecha"] = [etiqueta_mes(f) for f in datos["Fecha"]]
     return datos
@@ -181,7 +181,7 @@ def preparar_btc(crudo: pd.DataFrame, ahora: datetime) -> pd.DataFrame:
 
 
 def grafico_btc(btc_df: pd.DataFrame, carpeta: Path) -> Path:
-    """Precio de BTC con medias de 7 y 30 días y volatilidad de 20 días (celda 43)."""
+    """Precio de BTC con medias de 7 y 30 días y volatilidad de 20 días."""
     # .iloc[-1] es la ÚLTIMA vela disponible, no necesariamente la de hoy: yfinance
     # cierra el día según UTC y puede venir con retraso. Por eso dice 'Última cotización'.
     price_last = float(btc_df["Close"].iloc[-1])

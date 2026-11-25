@@ -10,7 +10,6 @@ COLUMNAS_VALORES = [
     "Solidario", "TCV_MEP", "riesgo_pais", "TCC_Euro", "TCV_Euro", "fed_tea", "bcra_tea",
 ]
 COLUMNAS_FILA = ["Fecha", *COLUMNAS_VALORES]
-COLUMNAS_TABLA = [*COLUMNAS_FILA, "ai_paragraph", "ai_model"]
 
 
 class FilaMacro(BaseModel):

@@ -1,6 +1,6 @@
-"""Commit y push de los gráficos de Previews/ (celda 49 del notebook) y publicación del PowerPoint.
+"""Commit y push de los gráficos de Previews/ y publicación del PowerPoint.
 
-La celda corría git sin mirar el código de salida: si el commit o el push fallaban,
+La versión original corría git sin mirar el código de salida: si el commit o el push fallaban,
 igual imprimía "Previews actualizado en GitHub", y en el contenedor (sin .git ni
 git instalado) informaba "No hubo cambios". Acá cada comando se chequea.
 
@@ -75,7 +75,7 @@ def actualizar_previews(
 
     Con `archivos`, solo esos: el repo es público y un archivo que cayó en la
     carpeta por error (una vista previa del mail, por ejemplo) no tiene que
-    publicarse. Sin `archivos`, toda la carpeta, como la celda 49.
+    publicarse. Sin `archivos`, toda la carpeta.
 
     Levanta GitError si falla un comando cuando sí correspondía correrlo. Los casos
     en que no corresponde (sin git, sin repo, otra rama, sin cambios) no son error.
@@ -94,7 +94,7 @@ def actualizar_previews(
 
     _git(repo, "add", "--", *rutas)
     # Con las rutas al final, el commit lleva solo esos archivos aunque haya otras
-    # cosas en el stage. La celda hacía un `git commit` a secas.
+    # cosas en el stage.
     _git(repo, "commit", "-m", MENSAJE, "--", *rutas)
     _push_con_reintento(repo)
     log.info("Previews actualizado en GitHub")

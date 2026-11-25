@@ -1,7 +1,7 @@
 """Variables monetarias del BCRA, vía httpx asíncrono.
 
-Ojo con el orden: la API devuelve el detalle de más NUEVO a más VIEJO. El código
-que estaba en el notebook tomaba .iloc[-1] sobre ese detalle sin invertirlo, o sea
+Ojo con el orden: la API devuelve el detalle de más NUEVO a más VIEJO. Una versión
+anterior tomaba .iloc[-1] sobre ese detalle sin invertirlo, o sea
 el registro más viejo de la ventana de 1000 puntos, guardaba la BADLAR de junio
 de 2022 como si fuera la de hoy. Acá las series se devuelven siempre ascendentes
 y el último valor es, efectivamente, el último.
@@ -19,7 +19,7 @@ API_BASE = "https://api.bcra.gob.ar/estadisticas/v4.0/Monetarias"
 VAR_TEA = 140       # BADLAR bancos privados, en porcentaje EFECTIVO anual
 VAR_INFLACION = 27  # Inflación mensual, en porcentaje
 
-# El BCRA tenía la cadena de certificados rota y el notebook usaba verify=False.
+# El BCRA tenía la cadena de certificados rota y se usaba verify=False.
 # Ya está arreglada, así que se valida TLS como corresponde.
 TIMEOUT = httpx.Timeout(30.0, connect=10.0)
 
@@ -43,7 +43,7 @@ async def run(client: httpx.AsyncClient | None = None) -> dict:
     """Último BADLAR efectivo anual y la serie de inflación mensual.
 
     Claves: bcra_tea (float), bcra_tea_fecha (date) e inflacion_mensual, que es
-    la lista (fecha, valor) ascendente que el notebook usa para los acumulados.
+    la lista (fecha, valor) ascendente que se usa para los acumulados.
     """
     try:
         async with cliente_http(client, TIMEOUT) as c:

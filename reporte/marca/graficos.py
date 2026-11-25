@@ -1,6 +1,6 @@
 """Los seis gráficos del reporte (todos menos BTC) con la estética de GlobalAIze.
 
-MODO PRUEBA, ver estilo.py. Reusan la preparación de datos de reporte/charts.py
+Reusan la preparación de datos de reporte/charts.py
 (preparar_datos, preparar_variaciones, preparar_agregados, preparar_deuda...), que
 no cambia: solo se redibuja. Cada función devuelve una Figure transparente de
 (ancho x alto) pulgadas; `guardar` la monta sobre su panel de vidrio para el mail y
@@ -27,6 +27,7 @@ from matplotlib.figure import Figure
 from matplotlib.ticker import FuncFormatter, MultipleLocator
 
 from reporte import charts
+from reporte.indicadores import numero
 from reporte.marca import estilo
 from reporte.marca.estilo import (
     AZUL,
@@ -51,8 +52,8 @@ DPI = 200  # con 1 pulgada = 100 px lógicos del vidrio (K = 2)
 # ── Utilidades ───────────────────────────────────────────────────────────────
 
 def es(valor: float, decimales: int = 0) -> str:
-    """Formato argentino: 1234.5 con un decimal da '1.234,5'."""
-    return f"{valor:,.{decimales}f}".replace(",", "_").replace(".", ",").replace("_", ".")
+    """Formato argentino sin decimales por defecto: 1234.5 con un decimal da '1.234,5'."""
+    return numero(valor, decimales)
 
 
 def _formato_es(decimales: int = 0, sufijo: str = "") -> FuncFormatter:
@@ -183,7 +184,6 @@ def riesgo_pais(data: pd.DataFrame, n: int = charts.COTIZACIONES_A_MOSTRAR, con_
 
     fig, ax = _figura(10, 5.6, f"Riesgo país, últimas {len(ultimos)} ruedas" if con_titulo else None,
                       "Puntos básicos sobre los bonos del Tesoro de EE. UU. Más bajo es mejor." if con_titulo else None, leyenda=False)
-    ax = ax if not hasattr(ax, "__len__") else ax[0]
     colores = [MALO if v == maximo else BUENO if v == minimo else CIAN for v in valores]
     ax.bar(ultimos.index, valores, width=0.68, color=colores, linewidth=0, zorder=3)
     for i, (valor, var) in enumerate(zip(valores, variaciones)):
@@ -213,7 +213,6 @@ def inflacion(datos: pd.DataFrame, con_titulo: bool = True) -> Figure:
     fig, ax = _figura(10, 6.4, f"Inflación de los últimos {n} meses" if con_titulo else None,
                       "Barras: variación mensual (eje izquierdo). Línea: variación de los últimos 12 meses (eje derecho)." if con_titulo else None,
                       margen_derecho=0.10)
-    ax = ax if not hasattr(ax, "__len__") else ax[0]
     ax2 = ax.twinx()
     mensual, anual = datos["Inflación Mensual"], datos["Inflación Anual"]
     pos = list(range(n))
@@ -268,7 +267,6 @@ def variaciones(va: pd.DataFrame, con_titulo: bool = True) -> Figure:
     fig, ax = _figura(10, 5.8, f"Dólar contra inflación desde {charts.mes_abreviado(inicio)}/{inicio:%Y}" if con_titulo else None,
                       "Variación acumulada de cada uno desde el inicio del período, en %." if con_titulo else None,
                       margen_derecho=0.13)
-    ax = ax if not hasattr(ax, "__len__") else ax[0]
     columnas = [("Variación Solidario Acumulada", "Solidario", VERDE_AZULADO, "default"),
                 ("Variación TCV Blue Acumulada", "Blue", CIAN, "default"),
                 ("Inflación Mensual Acumulada", "Inflación", OLIVA, "steps-pre")]

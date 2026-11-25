@@ -1,7 +1,6 @@
-"""Gráficos nativos de PowerPoint con la estética de GlobalAIze (para la presentación de prueba).
+"""Gráficos nativos de PowerPoint con la estética de GlobalAIze.
 
-Mismos datos y misma lógica que reporte/graficos_pptx.py, que no cambia: lo que se
-reemplaza es el estilo. Fondo transparente (se ve el vidrio de la diapositiva),
+Mismos datos y misma lógica que reporte/graficos_pptx.py (los ayudantes de ejes): acá va el estilo. Fondo transparente (se ve el vidrio de la diapositiva),
 letra clara, grilla apenas visible y la paleta de series de la marca. Lo que no es
 de estilo (la escala de los ejes, el eje secundario de la inflación, el eje de
 fechas) se importa de graficos_pptx.
@@ -21,7 +20,6 @@ from reporte import charts, transformations
 from reporte.graficos_pptx import (
     EJE_Y2,
     _a_linea_en_eje_secundario,
-    _es,
     _escala,
     _escala_secundaria,
     _etiqueta_final,
@@ -29,6 +27,7 @@ from reporte.graficos_pptx import (
     _ultimas_ruedas,
     _valores,
 )
+from reporte.indicadores import numero as _es  # formato argentino de las etiquetas escritas a mano
 from reporte.marca import estilo
 from reporte.marca.graficos import OFICIALES, PARALELAS
 
@@ -47,11 +46,10 @@ SIN_RELLENO = '<c:spPr {ns}><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>'
 def _transparente(grafico) -> None:
     """Sin fondo ni borde en el gráfico y en el área de trazado, para que se vea el vidrio de atrás."""
     espacio = grafico._chartSpace
-    for padre, despues in ((espacio, espacio.find(qn("c:chart"))), ):
-        previo = padre.find(qn("c:spPr"))
-        if previo is not None:
-            padre.remove(previo)
-        despues.addnext(parse_xml(SIN_RELLENO.format(ns=nsdecls("c", "a"))))
+    previo = espacio.find(qn("c:spPr"))
+    if previo is not None:
+        espacio.remove(previo)
+    espacio.find(qn("c:chart")).addnext(parse_xml(SIN_RELLENO.format(ns=nsdecls("c", "a"))))
     area = espacio.chart.plotArea
     previo = area.find(qn("c:spPr"))
     if previo is not None:

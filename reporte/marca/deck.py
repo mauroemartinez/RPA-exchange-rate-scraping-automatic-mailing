@@ -1,15 +1,14 @@
 """La presentación ejecutiva con la estética de GlobalAIze: nueve diapositivas sobre vidrio azul.
 
-MODO PRUEBA, ver estilo.py. Mismas nueve diapositivas, mismos datos y mismos textos que
-reporte/presentacion.py (que no cambia: de ahí se importan las frases calculadas y los
-helpers de datos). Lo que cambia es todo lo visual:
+Mismas nueve diapositivas, datos y textos que describe reporte/presentacion.py (de ahí se
+importan las frases calculadas y los helpers de datos). Lo visual es de este módulo:
 
   * cada diapositiva es una imagen de fondo con las luces de la marca y un panel de vidrio
     en el lugar de cada tarjeta (vidrio.py, como en los tableros de Power BI); los gráficos
     y los textos van encima, sin relleno, como piden las reglas de la marca;
   * los cinco gráficos nativos siguen siendo editables, ahora con la paleta de la marca;
   * títulos en Newsreader y textos en IBM Plex Sans: hay que tener instaladas las fuentes
-    (se dejan en prueba_marca/fuentes/), PowerPoint no las incrusta;
+    (están en reporte/recursos/marca/fuentes/), PowerPoint no las incrusta;
   * rojo y verde solo para subas y bajas, siempre con flecha.
 """
 
@@ -19,6 +18,7 @@ import os
 from datetime import date
 from pathlib import Path
 
+import pandas as pd
 from PIL import Image
 from pptx import Presentation
 from pptx.dml.color import RGBColor
@@ -348,12 +348,13 @@ def armar(df, imagenes: dict[str, Path], salida: Path, parrafo: str | None = Non
     d.bloques(52, 130, 1176, 72, [("", parrafo)], maximo=16, minimo=10, color=TINTA)
     d.slide.notes_slide.notes_text_frame.text = parrafo
     mitad = (1232 - espacio) / 2
+    frases = {"paralela": presentacion.frase_paralelas(hoy, ayer), "oficial": presentacion.frase_oficiales(hoy, ayer)}
     textos_cambio = [presentacion._comentario(comentarios, charts.cid(charts.TIPOS_DE_CAMBIO), c) or f
-                     for c, f in (("paralela", presentacion.frase_paralelas(hoy, ayer)), ("oficial", presentacion.frase_oficiales(hoy, ayer)))]
+                     for c, f in frases.items()]
     comun = min(_tamanio([("x", t)], mitad - 52, 148, 14, 10) for t in textos_cambio)
     for j, (dibujar, clave, titulo, sub, frase) in enumerate([
-        (nativos.paralelas, "paralela", "Cotizaciones paralelas", "Pesos por dólar. Punteado: compra.", presentacion.frase_paralelas(hoy, ayer)),
-        (nativos.oficiales, "oficial", "Cotizaciones oficiales (BNA)", "Pesos por dólar. Punteado: compra.", presentacion.frase_oficiales(hoy, ayer)),
+        (nativos.paralelas, "paralela", "Cotizaciones paralelas", "Pesos por dólar. Punteado: compra.", frases["paralela"]),
+        (nativos.oficiales, "oficial", "Cotizaciones oficiales (BNA)", "Pesos por dólar. Punteado: compra.", frases["oficial"]),
     ]):
         x = 24 + j * (mitad + espacio)
         d.panel(x, 228, mitad, 252)
@@ -379,7 +380,7 @@ def armar(df, imagenes: dict[str, Path], salida: Path, parrafo: str | None = Non
     for j, (nombre, titulo, sub, dibujar) in enumerate([
         (charts.INFLACION, "Inflación de los últimos 12 meses", "Barras: mensual. Línea: interanual (eje derecho).",
          lambda s, *caja: nativos.inflacion(s, *caja, inflacion)),
-        (charts.VARIACIONES, "Dólar contra inflación", f"Variación acumulada desde {indicadores.mes_y_anio(pd_ts(charts.FECHA_INICIO_VARIACIONES))}.",
+        (charts.VARIACIONES, "Dólar contra inflación", f"Variación acumulada desde {indicadores.mes_y_anio(pd.Timestamp(charts.FECHA_INICIO_VARIACIONES))}.",
          lambda s, *caja: nativos.variaciones(s, *caja, df, inflacion)),
     ]):
         x = 24 + j * (mitad + espacio)
@@ -454,8 +455,3 @@ def armar(df, imagenes: dict[str, Path], salida: Path, parrafo: str | None = Non
         temporal.unlink(missing_ok=True)
     return ruta
 
-
-def pd_ts(texto: str):
-    import pandas as pd
-
-    return pd.Timestamp(texto)

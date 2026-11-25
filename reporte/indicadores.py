@@ -66,7 +66,6 @@ MESES = (
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 )
-# Diferencias menores que esto (en puntos porcentuales) cuentan como "igual que la inflación"
 # Puntos porcentuales dentro de los cuales una variación se considera igual a la inflación
 TOLERANCIA_REAL = 0.5
 

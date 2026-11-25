@@ -1,11 +1,11 @@
-"""Armado y envío del mail del reporte (celdas 45 a 47 del notebook).
+"""Armado y envío del mail del reporte.
 
 Lo usan el pipeline diario y scripts/reenvio_manual.py, así el mail sale igual por
 los dos caminos. Antes el script tenía su propia copia de estos cálculos y se había
 desincronizado: mostraba la tabla de inflación invertida y la interanual de hace
 doce meses.
 
-A diferencia de la celda 47, un envío fallido no se imprime y se olvida: enviar()
+Un envío fallido no se imprime y se olvida: enviar()
 levanta, y enviar_reporte_diario() devuelve el error de cada variante para que el
 pipeline ponga la corrida en rojo. Un 535 de Gmail no puede pasar como éxito.
 """
@@ -65,7 +65,7 @@ def pintar_variacion(valor):
 
 
 def preparar_df_mail(df: pd.DataFrame) -> pd.DataFrame:
-    """TEA como porcentaje en texto y Fecha 'dd/mm/yy' (celdas 46 y 47).
+    """TEA como porcentaje en texto y Fecha 'dd/mm/yy'.
 
     Recibe el DataFrame con brechas y variaciones y devuelve una copia: las TEA
     numéricas siguen haciendo falta para los forwards de Fisher, que van antes.
@@ -105,7 +105,7 @@ def tabla_inflacion(inflacion_12: pd.DataFrame) -> tuple[str, str]:
     """(tabla HTML, interanual). Los meses de más viejo a más nuevo, como en el gráfico.
 
     La interanual es la del mes más reciente y se toma antes de pasar las columnas
-    a proporción (celda 45).
+    a proporción.
     """
     inflacion = inflacion_12.copy()
     interanual = f"{inflacion['Inflación Anual'].iloc[-1]:,.2f}%"
@@ -125,7 +125,7 @@ def tabla_inflacion(inflacion_12: pd.DataFrame) -> tuple[str, str]:
 
 
 def resumen_ejecutivo(df: pd.DataFrame) -> dict:
-    """Costo blue contra oficial, variaciones del día y riesgo país (celda 47)."""
+    """Costo blue contra oficial, variaciones del día y riesgo país."""
     costo_blue = float(df["TCV_Blue"].iloc[0] * CANTIDAD_USD)
     costo_oficial = float(df["Solidario"].iloc[0] * CANTIDAD_USD)
     ahorro_valor = costo_blue - costo_oficial
@@ -194,7 +194,7 @@ def contexto_template(
     comentarios: dict[str, list[tuple[str, str]]] | None = None,
     explicaciones: dict[str, dict] | None = None,
 ) -> dict:
-    """Las variables que recibe el template (celda 47)."""
+    """Las variables que recibe el template."""
     df_mail = preparar_df_mail(df)
     tabla_infl, interanual = tabla_inflacion(inflacion_12)
     if graficos is None:
@@ -282,7 +282,7 @@ def csv_historico(df: pd.DataFrame) -> str:
     """El histórico completo como CSV, para la variante del mail con adjunto.
 
     Se arma en el momento desde los datos de Supabase, más nuevo primero y con las
-    mismas columnas que tenía el archivo de RUTA_BBDD. La celda 47 adjuntaba ese
+    mismas columnas que tenía el archivo de RUTA_BBDD. Antes se adjuntaba ese
     archivo tal cual, pero nadie lo actualizaba desde junio de 2026: los
     destinatarios recibían una foto vieja, con los párrafos de IA mal decodificados
     (se leía en latin-1 un archivo con texto UTF-8), y en el contenedor ni siquiera
@@ -314,7 +314,7 @@ def enviar_reporte_diario(
     """Las dos variantes del mail diario en paralelo. Devuelve el error de cada una.
 
     'sin_csv' va a EMAIL_RECEIVER y 'con_csv' a EMAIL_RECEIVER_CSV, todos en Cco y
-    con el remitente en Para, igual que la celda 47. Un valor None es un envío OK.
+    con el remitente en Para. Un valor None es un envío OK.
     No se reintenta: si un envío falló después de entregarse a medias, reintentar
     duplicaría el mail a los que sí lo recibieron.
     """

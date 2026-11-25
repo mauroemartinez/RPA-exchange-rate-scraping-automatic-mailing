@@ -26,7 +26,6 @@ MARCA = Path(__file__).resolve().parent.parent / "recursos" / "marca"
 
 # ── Colores (tema oscuro de Power BI de la marca) ────────────────────────────
 PAGINA = "#040F23"
-TARJETA = "#051E45"
 ELEVADA = "#0D2C5F"
 BORDE = "#2A394D"
 TINTA = "#F0EEE9"
@@ -38,7 +37,7 @@ ROJO, VERDE_AZULADO, MAGENTA, VERDE = "#C13234", "#3BAB8D", "#B33879", "#47AB4F"
 SERIES = [CIAN, VIOLETA, OLIVA, AZUL, ROJO, VERDE_AZULADO, MAGENTA, VERDE]
 
 # Estados: solo para subas, bajas y alertas
-BUENO, MALO, NEUTRO = "#62D286", "#EF6661", "#D8C65A"
+BUENO, MALO = "#62D286", "#EF6661"
 
 # ── Tipografías ──────────────────────────────────────────────────────────────
 # Matplotlib no lee woff2: se convierten a ttf una vez (ver preparar_fuentes).

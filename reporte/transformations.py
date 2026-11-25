@@ -1,6 +1,6 @@
 """Armado de la fila del día, validación y cálculos sobre el histórico.
 
-Son las celdas 21 a 34 del notebook, convertidas en funciones puras: reciben
+Son funciones puras: reciben
 DataFrames y devuelven DataFrames nuevos, sin red, sin base y sin archivos.
 """
 
@@ -28,7 +28,7 @@ class ResultadosScraping:
 
 
 def armar_fila_nueva(res: ResultadosScraping, fecha: date) -> pd.DataFrame:
-    """La fila del día, con las columnas en el orden de la tabla (celdas 24 a 29)."""
+    """La fila del día, con las columnas en el orden de la tabla ."""
     fila = {
         "Fecha": fecha,
         "TCC_Blue": res.dolarhoy["TCC_Blue"],
@@ -89,7 +89,7 @@ def controlar_saltos(fila: pd.DataFrame, historico: pd.DataFrame) -> None:
 
 
 def avisos_de_frescura(res: ResultadosScraping, fecha: date) -> list[str]:
-    """Fuentes cuyo último dato publicado no es de hoy (celdas 21 y 28).
+    """Fuentes cuyo último dato publicado no es de hoy.
 
     No es un error: el riesgo país sale con un día hábil de rezago y la BADLAR con
     dos. Se informa para que el desfase quede a la vista y no se repita en silencio.
@@ -103,14 +103,14 @@ def avisos_de_frescura(res: ResultadosScraping, fecha: date) -> list[str]:
 
 
 def sumar_al_historico(fila: pd.DataFrame, historico: pd.DataFrame) -> pd.DataFrame:
-    """La fila nueva arriba del histórico, que viene más nuevo primero (celda 32)."""
+    """La fila nueva arriba del histórico, que viene más nuevo primero ."""
     return pd.concat([fila, historico]).reset_index(drop=True)
 
 
 def forwards_fisher(df: pd.DataFrame) -> tuple[float, float]:
     """Paridad de tasas de Irving Fisher a 3 meses: (forward oficial, forward blue).
 
-    Celda 33. Toma la fila más nueva y tiene que correr antes de que las TEA se
+    Toma la fila más nueva y tiene que correr antes de que las TEA se
     pasen a texto para el mail.
     """
     division = (1 + float(df["bcra_tea"].iloc[0]) / 100) / (1 + float(df["fed_tea"].iloc[0]) / 100)
@@ -118,7 +118,7 @@ def forwards_fisher(df: pd.DataFrame) -> tuple[float, float]:
 
 
 def agregar_brechas_y_variaciones(df: pd.DataFrame) -> pd.DataFrame:
-    """Brechas contra el blue y variación diaria de solidario, blue y euro (celda 34).
+    """Brechas contra el blue y variación diaria de solidario, blue y euro.
 
     pct_change(periods=-1) compara cada fila con la siguiente, que es el día
     anterior porque el DataFrame viene más nuevo primero.
@@ -139,7 +139,7 @@ def agregar_brechas_y_variaciones(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def serie_inflacion(inflacion_mensual: list[tuple[date, float]]) -> pd.DataFrame:
-    """Serie completa de inflación con los acumulados de 2, 3 y 12 meses (celda 21).
+    """Serie completa de inflación con los acumulados de 2, 3 y 12 meses.
 
     Ascendente, con Fecha como datetime. inflacion_mensual es la lista (fecha, valor)
     que devuelve scrapers.bcra, ya ordenada de más vieja a más nueva, que es el orden

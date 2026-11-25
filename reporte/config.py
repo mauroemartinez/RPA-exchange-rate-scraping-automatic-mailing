@@ -84,7 +84,7 @@ class Settings(BaseSettings):
     def _split_emails(cls, v: str | list[str]) -> list[str] | str:
         """Convierte 'a@x.com, b@y.com' en ['a@x.com', 'b@y.com'].
 
-        Reemplaza a parse_env_email_list() del notebook. Corre en modo 'before',
+        Corre en modo 'before',
         o sea antes de que pydantic valide el tipo list[str].
         """
         if isinstance(v, str):

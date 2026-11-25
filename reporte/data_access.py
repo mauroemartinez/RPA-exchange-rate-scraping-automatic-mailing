@@ -1,7 +1,6 @@
 """Lectura y escritura de Fact_Mercado_Macro en Supabase.
 
-Es lo que hacían las celdas 14, 18 y 36 del notebook: crear el engine, leer el
-histórico completo y guardar la fila del día sin duplicar la fecha.
+Crea el engine, lee el histórico completo y guarda la fila del día sin duplicar la fecha.
 """
 
 import logging
@@ -40,7 +39,7 @@ CLAVE_CANDADO = 7_041_998
 
 
 def crear_engine() -> Engine:
-    """Engine con la misma configuración que tenía el notebook (celda 14)."""
+    """Engine de SQLAlchemy contra Supabase, con pre-ping de las conexiones."""
     return create_engine(
         settings.supabase_db_url.get_secret_value(),
         pool_size=3,
@@ -62,7 +61,7 @@ def leer_historico(engine: Engine, respaldo_csv: bool = True) -> tuple[pd.DataFr
     """Toda la tabla, más nuevo primero, con Fecha como texto 'YYYY-MM-DD'.
 
     Devuelve también de dónde salió: "supabase" o, si la base no responde, "csv"
-    (el respaldo local de RUTA_BBDD, como el plan B de la celda 18). Ojo que ese
+    (el respaldo local de RUTA_BBDD). Ojo que ese
     CSV no lo actualiza nadie: es una foto vieja y solo sirve para no frenar en seco.
     Con respaldo_csv=False el error de la base se propaga.
     """
@@ -89,7 +88,7 @@ def guardar_fila(engine: Engine, fila: pd.DataFrame, sobrescribir: bool = False)
     """Guarda la fila del día. Devuelve True si escribió, False si la fecha ya estaba.
 
     Un solo INSERT ... ON CONFLICT, atómico, en vez de traer todas las fechas y
-    filtrar en pandas como hacía la celda 36. Con sobrescribir=False la fila
+    filtrar en pandas. Con sobrescribir=False la fila
     existente no se toca (el comportamiento de siempre); con True se pisan sus
     valores, que es lo que pide una corrida repetida a propósito (--forzar).
     """
@@ -146,8 +145,7 @@ def candado_corrida(engine: Engine):
 TABLA_SERIES = "Fact_Series_Macro"
 
 # Formato largo: una fila por serie y fecha, con la unidad y la frecuencia de la
-# fuente. La crea sql/06_series_macro.sql; mientras no exista, el pipeline omite
-# la etapa en vez de fallar.
+# fuente. La crea sql/06_series_macro.sql, que se aplica a mano.
 _metadata = MetaData()
 series_macro = Table(
     TABLA_SERIES,

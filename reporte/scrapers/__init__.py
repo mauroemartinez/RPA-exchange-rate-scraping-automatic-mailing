@@ -25,5 +25,5 @@ async def _run_all():
 
 def run_all_sync() -> tuple[dict, dict, dict, dict, dict, dict]:
     """Corre BNA, DolarHoy, Ambito, riesgo país, BCRA y FED en paralelo y devuelve
-    sus resultados en ese orden. Pensada para llamarse desde una celda de notebook."""
+    sus resultados en ese orden."""
     return run_async(_run_all())

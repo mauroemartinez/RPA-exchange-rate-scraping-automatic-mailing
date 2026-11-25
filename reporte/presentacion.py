@@ -25,6 +25,7 @@ mano desde Supabase está scripts/presentacion_ejecutiva.py.
 """
 
 import logging
+import re
 from datetime import UTC, date, datetime
 from pathlib import Path
 
@@ -186,8 +187,6 @@ def _metadatos(prs, fecha: date) -> None:
 
 def _colores_de_link(prs) -> None:
     """Los links en el cian y el violeta de GlobalAIze: PowerPoint ignora el color del texto y usa el del tema."""
-    import re
-
     tema = prs.slide_masters[0].part.part_related_by(RELATIONSHIP_TYPE.THEME)
     xml = tema.blob.decode("utf-8")
     for etiqueta, color in (("hlink", "0DA4CF"), ("folHlink", "795EC9")):

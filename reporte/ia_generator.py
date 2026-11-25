@@ -247,7 +247,7 @@ def guardar_secciones(engine, fecha: date, secciones: SeccionesIA, modelo: str |
     """El resumen va a ai_paragraph, como siempre; los comentarios por gráfico, a ai_secciones (JSON).
 
     ai_paragraph sigue teniendo el párrafo general, así el reenvío manual, el CSV
-    adjunto y el notebook funcionan igual que antes.
+    adjunto funcionan igual que antes.
     """
     contenido = secciones.model_dump(exclude={"resumen"})
     contenido["modelo"] = modelo

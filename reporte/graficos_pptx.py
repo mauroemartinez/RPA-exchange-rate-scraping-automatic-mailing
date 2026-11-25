@@ -32,11 +32,6 @@ def _valores(serie) -> list[float | None]:
     return [None if pd.isna(v) else float(v) for v in serie]
 
 
-def _es(valor: float, decimales: int = 1) -> str:
-    """Formato argentino para las etiquetas escritas a mano: 1234.5 da '1.234,5'."""
-    return f"{valor:,.{decimales}f}".replace(",", "_").replace(".", ",").replace("_", ".")
-
-
 def _escala(valores, divisiones: int = 5) -> tuple[float, float, float]:
     """(mínimo, máximo, paso) redondos para el eje.
 
