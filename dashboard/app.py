@@ -41,11 +41,10 @@ st.set_page_config(
 # ── Idioma ────────────────────────────────────────────────────────────────────
 IDIOMA = "en" if st.query_params.get("lang") == "en" else "es"
 
+
 TEXTOS = {
     "es": {
         "titulo": "Seguimiento macroeconómico de Argentina", "oscuro": "Oscuro", "claro": "Claro",
-        "bajada": "Dólares, brechas, riesgo país, tasas, inflación, dinero, deuda y bitcoin, todos los días hábiles. "
-                  "Último dato: <b>{fecha}</b>. Datos publicados desde el {desde}.",
         "blue": "Dólar blue (venta)", "mep": "Dólar MEP", "oficial": "Oficial BNA (venta)",
         "brecha": "Brecha blue vs. oficial", "riesgo": "Riesgo país", "badlar": "BADLAR (TEA)",
         "inflacion": "Inflación mensual", "bitcoin": "Bitcoin",
@@ -54,7 +53,7 @@ TEXTOS = {
                          "pasado (31/12/{anio}). Rojo es una suba de algo que conviene que baje (dólares, brecha, riesgo "
                          "país, inflación) y verde, una baja; en tasas y bitcoin la flecha solo dice si subió o bajó. "
                          "\"pp\" son puntos porcentuales.",
-        "periodo": "Período de los gráficos",
+        "periodo": "Período de los gráficos", "ultimo": "Último dato: <b>{fecha}</b>", "como_leer": "Cómo leer las tarjetas",
         "p1m": "1 mes", "p3m": "3 meses", "p6m": "6 meses", "p1a": "1 año", "pytd": "En el año", "ptodo": "Desde {desde}",
         "pest": ["Oficiales", "Paralelos", "Brechas", "Riesgo país", "Tasas", "Inflación", "Dinero y BCRA", "Deuda",
                  "Bitcoin", "Análisis de IA", "Datos", "Fuentes"],
@@ -86,8 +85,6 @@ TEXTOS = {
     },
     "en": {
         "titulo": "Argentina's macroeconomy, day by day", "oscuro": "Dark", "claro": "Light",
-        "bajada": "Dollar rates, gaps, country risk, interest rates, inflation, money, debt and bitcoin, every business day. "
-                  "Latest data: <b>{fecha}</b>. Data published from {desde}.",
         "blue": "Blue dollar (sell)", "mep": "MEP dollar", "oficial": "Official BNA (sell)",
         "brecha": "Blue vs. official gap", "riesgo": "Country risk", "badlar": "BADLAR (APY)",
         "inflacion": "Monthly inflation", "bitcoin": "Bitcoin",
@@ -96,7 +93,7 @@ TEXTOS = {
                          "(12/31/{anio}). Red is a rise in something that should go down (dollars, gap, country risk, "
                          "inflation) and green a fall; for rates and bitcoin the arrow only says up or down. "
                          "\"pp\" are percentage points.",
-        "periodo": "Chart period",
+        "periodo": "Chart period", "ultimo": "Latest data: <b>{fecha}</b>", "como_leer": "How to read the cards",
         "p1m": "1 month", "p3m": "3 months", "p6m": "6 months", "p1a": "1 year", "pytd": "Year to date", "ptodo": "Since {desde}",
         "pest": ["Official", "Parallel", "Gaps", "Country risk", "Rates", "Inflation", "Money & central bank", "Debt",
                  "Bitcoin", "AI analysis", "Data", "Sources"],
@@ -264,7 +261,7 @@ def _estilos() -> None:
   /* Una sola vista: casi todo el ancho de la pantalla, sin márgenes de más. Las tarjetas van en la barra
      lateral, siempre abierta, y el contenido (tema, filtros y gráfico) en el centro. */
   .block-container { padding: 0.9rem 1.8rem 0.4rem; max-width: 100%; }
-  section[data-testid="stSidebar"] { background: transparent; width: 340px !important; min-width: 340px !important;
+  section[data-testid="stSidebar"] { background: transparent; width: 300px !important; min-width: 300px !important;
                                      border-right: 1px solid @linea_tabs; }
   section[data-testid="stSidebar"] > div { background: transparent; }
   [data-testid="stSidebarContent"] { padding: 0.9rem 0.9rem 0.4rem; }
@@ -272,7 +269,7 @@ def _estilos() -> None:
   [data-testid="collapsedControl"] { display: none !important; }
   .encabezado { display: flex; align-items: center; gap: 20px; }
   .encabezado img { height: 40px; width: auto; display: block; }
-  .encabezado .titulo { font-size: 1.7rem; color: @tinta; line-height: 1.05; margin: 0; }
+  .encabezado .titulo { font-size: 1.5rem; color: @tinta; line-height: 1.05; margin: 0; }
   @media (max-width: 900px) { .encabezado { flex-wrap: wrap; } .encabezado .titulo { font-size: 1.7rem; } }
   .idiomas { display: inline-flex; border: 1px solid @borde; border-radius: 8px; overflow: hidden; background: @vidrio; }
   .idiomas a { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; color: @tinta !important;
@@ -280,7 +277,11 @@ def _estilos() -> None:
   .idiomas a + a { border-left-color: @borde; }
   .idiomas a.activo { color: @acento !important; border-color: @acento; border-radius: 8px; }
   .idiomas svg { width: 20px; height: 14px; border-radius: 2px; box-shadow: 0 0 0 1px rgb(0 0 0 / .15); flex: none; }
-  .bajada { color: @secundario; font-size: 0.82rem; margin: 4px 0 8px; }
+  .cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 8px; }
+  .controles { display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto; }
+  .ultimo { color: @secundario; font-size: 0.78rem; margin-top: 2px; }
+  details.nota summary { cursor: pointer; color: @secundario; }
+  details.nota[open] summary { margin-bottom: 4px; }
   /* Vidrio de la marca: tinte, desenfoque, canto de luz fino (más claro arriba a la izquierda
      y abajo a la derecha), sin brillo, sombra suave y radio 14. */
   .vidrio {
@@ -294,11 +295,11 @@ def _estilos() -> None:
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
   }
-  .tarjetas { display: flex; flex-direction: column; gap: 8px; margin: 0 0 8px; }
-  .tarjeta { padding: 9px 14px; }
-  .tarjeta .rotulo { color: @secundario; font-size: 0.68rem; letter-spacing: .05em; text-transform: uppercase; font-weight: 600; }
-  .tarjeta .valor { color: @tinta; font-size: 1.4rem; font-weight: 600; margin: 1px 0 3px; line-height: 1.2; }
-  .tarjeta .delta { font-size: 0.72rem; color: @secundario; line-height: 1.45; }
+  .tarjetas { display: flex; flex-direction: column; gap: 6px; margin: 0 0 6px; }
+  .tarjeta { padding: 7px 12px; }
+  .tarjeta .rotulo { color: @secundario; font-size: 0.62rem; letter-spacing: .05em; text-transform: uppercase; font-weight: 600; }
+  .tarjeta .valor { color: @tinta; font-size: 1.15rem; font-weight: 600; margin: 0 0 2px; line-height: 1.2; }
+  .tarjeta .delta { font-size: 0.66rem; color: @secundario; line-height: 1.4; }
   .tarjeta .delta .sep { color: @tenue; }
   .scroll { max-height: calc(100vh - 370px); overflow-y: auto; }
   .tarjeta .delta b { font-weight: 600; }
@@ -310,6 +311,26 @@ def _estilos() -> None:
   /* El gráfico va dentro del vidrio; sin relleno extra, para que no aparezca un scroll de más */
   [data-testid="stPlotlyChart"] {
     background: @vidrio; border: 1.5px solid @borde; border-radius: 14px; box-shadow: @sombra; overflow: hidden;
+  }
+  /* El gráfico ocupa el alto que queda de la ventana (menos el encabezado, el tema y el filtro) */
+  [data-testid="stElementContainer"]:has([data-testid="stPlotlyChart"]), [data-testid="stFullScreenFrame"]:has([data-testid="stPlotlyChart"]),
+  [data-testid="stElementContainer"]:has(> iframe[title="st.iframe"]), iframe[title="st.iframe"] {
+    /* Streamlit fija el contenedor con flex-basis: 450px, que le gana a height: se lo saca */
+    flex: 0 0 auto !important; height: calc(100vh - 440px) !important; min-height: 300px; max-height: 720px;
+  }
+  [data-testid="stPlotlyChart"], [data-testid="stPlotlyChart"] > div, [data-testid="stPlotlyChart"] .js-plotly-plot,
+  [data-testid="stPlotlyChart"] .plot-container { height: 100% !important; }
+  .tarjetas-movil { display: none; }
+  @media (max-width: 900px) {
+    /* En el celular la barra lateral taparía todo: las tarjetas pasan al cuerpo, en una tira que se desliza de costado */
+    section[data-testid="stSidebar"], [data-testid="stSidebarContent"] { display: none !important; }
+    .block-container { padding: 0.6rem 0.8rem 0.4rem; }
+    .tarjetas-movil { display: block; }
+    .tarjetas-movil .tarjetas { flex-direction: row; overflow-x: auto; padding-bottom: 6px; gap: 8px; }
+    .tarjetas-movil .tarjeta { min-width: 215px; flex: none; }
+    .encabezado img { height: 28px; } .encabezado .titulo { font-size: 1.1rem; }
+    [data-testid="stElementContainer"]:has([data-testid="stPlotlyChart"]), [data-testid="stFullScreenFrame"]:has([data-testid="stPlotlyChart"]),
+    [data-testid="stElementContainer"]:has(> iframe[title="st.iframe"]), iframe[title="st.iframe"] { flex: 0 0 auto !important; height: 400px !important; }
   }
   .nota { color: @tenue; font-size: 0.82rem; margin-top: 6px; }
   .pie { color: @tenue; font-size: 0.82rem; text-align: center; margin: 28px 0 6px; }
@@ -409,7 +430,7 @@ def tarjeta_diaria(rotulo, valor, serie, actual, suba_es_mala=None, puntos=False
 
 
 # ── Gráficos ──────────────────────────────────────────────────────────────────
-ALTO = 540  # alto del gráfico: con el encabezado, el tema y el filtro entra en una pantalla de 1080 sin desplazarla
+ALTO = 500  # alto nominal; el real lo fija el CSS según la ventana (ver .stPlotlyChart)
 def _ticks(indice: pd.DatetimeIndex) -> dict:
     meses = T["meses"]
     dias = (indice.max() - indice.min()).days
@@ -435,7 +456,7 @@ def _layout(fig: go.Figure, alto: int, prefijo: str, sufijo: str, rango=None, in
     if rango:
         fig.update_yaxes(range=rango)
     fig.update_layout(
-        height=alto, margin=dict(l=12, r=120, t=40, b=12),
+        margin=dict(l=12, r=120, t=40, b=12),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family="IBM Plex Sans, Segoe UI, sans-serif", color=C["tinta"], size=13),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0, font=dict(color=C["secundario"])),
@@ -560,7 +581,7 @@ def mostrar_barras(fig: go.Figure) -> None:
     con_linea = any(t.type == "scatter" for t in fig.data)  # la línea lleva su último valor a la derecha
     fig.update_layout(margin=dict(l=12, r=90 if con_linea else 16, t=40, b=48), yaxis2=dict(showticklabels=False, ticks=""))
     fig.update_xaxes(automargin=True, tickfont=dict(size=13))
-    fig.update_layout(height=alto, autosize=True, width=None)
+    fig.update_layout(height=None, autosize=True, width=None)
     componentes.html(f"""
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.plot.ly/plotly-{PLOTLY_JS}.min.js" charset="utf-8"></script>
@@ -568,7 +589,8 @@ def mostrar_barras(fig: go.Figure) -> None:
   html, body {{ margin: 0; background: transparent; font-family: "IBM Plex Sans", system-ui, sans-serif; }}
   .marco {{ background: {C["vidrio"]}; border: 1.5px solid {C["borde"]}; border-radius: 14px; overflow: hidden; }}
   .desliza {{ overflow-x: auto; overflow-y: hidden; scrollbar-color: {C["eje"]} transparent; }}
-  .ancho {{ min-width: {ancho_minimo}px; height: {alto}px; }}
+  html, body, .marco, .desliza {{ height: 100%; }}
+  .ancho {{ min-width: {ancho_minimo}px; height: 100%; }}
 </style>
 <div class="marco"><div class="desliza" id="desliza"><div class="ancho" id="grafico"></div></div></div>
 <script>
@@ -617,28 +639,42 @@ fechas_ref = {
     T["anio"]: pd.Timestamp(hoy.year - 1, 12, 31),
 }
 
-# Encabezado: logo y título a la izquierda; el tema y, pegado al borde derecho, el idioma
-izquierda, col_tema, col_idioma = st.columns([8, 1.5, 1.25], vertical_alignment="center")
-with izquierda:
-    st.markdown(f'<div class="encabezado"><img src="data:image/svg+xml;base64,{_logo()}" alt="GlobalAIze">'
-                f'<div class="titulo">{T["titulo"]}</div></div>', unsafe_allow_html=True)
-with col_tema:
-    oscuro, claro = T["oscuro"], T["claro"]
-    elegido_tema = st.segmented_control("Tema / Theme", [oscuro, claro], default=oscuro if OSCURO else claro,
-                                        label_visibility="collapsed", key=f"tema_{IDIOMA}")
-if elegido_tema and (elegido_tema == oscuro) != OSCURO:
-    st.query_params["tema"] = "oscuro" if elegido_tema == oscuro else "claro"
-    st.rerun()
-with col_idioma:
-    # Links y no un control de Streamlit: los emojis de bandera no se ven en Windows, así que van en SVG
-    tema_url = "oscuro" if OSCURO else "claro"
-    st.markdown('<div class="idiomas" style="float:right">' + "".join(
-        f'<a href="?lang={codigo}&tema={tema_url}" target="_self" class="{"activo" if codigo == IDIOMA else ""}"'
-        f' aria-label="{nombre}">{BANDERAS[codigo]}<span>{codigo.upper()}</span></a>'
-        for codigo, nombre in (("es", "Español"), ("en", "English"))) + "</div>", unsafe_allow_html=True)
-st.markdown(f'<div class="bajada">{T["bajada"].format(fecha=fecha_larga(hoy), desde=fecha_larga(primero))}</div>',
-            unsafe_allow_html=True)
+# Encabezado: a la izquierda el logo y el título; a la derecha, juntos, el tema y el idioma. Todo en un mismo
+# bloque que baja de renglón en una pantalla angosta, en vez de superponerse. Son links: recargan la página con
+# el tema y el idioma elegidos .
+def _conmutador(opciones: list[tuple[str, str, bool, str]]) -> str:
+    return '<div class="idiomas">' + "".join(
+        f'<a href="{href}" target="_self" class="{"activo" if activo else ""}" aria-label="{nombre}">{contenido}</a>'
+        for href, contenido, activo, nombre in opciones) + "</div>"
 
+
+CLAVES_PERIODO = ["p1m", "p3m", "p6m", "p1a", "pytd", "ptodo"]
+ETIQUETAS_PERIODO = [T[k].format(desde=mes_anio(primero)) if k == "ptodo" else T[k] for k in CLAVES_PERIODO]
+
+
+def _param(nombre: str, cantidad: int) -> int | None:
+    try:
+        v = int(st.query_params.get(nombre, -1))
+    except ValueError:
+        return None
+    return v if 0 <= v < cantidad else None
+
+
+# Lo elegido en esta sesión o, si venimos de un link de tema o idioma, lo que trajo la URL
+_sel_tema, _sel_periodo = st.session_state.get(f"seccion_{IDIOMA}"), st.session_state.get(f"periodo_{IDIOMA}")
+idx_tema = T["pest"].index(_sel_tema) if _sel_tema in T["pest"] else (_param("s", len(T["pest"])) or 0)
+idx_per = (ETIQUETAS_PERIODO.index(_sel_periodo) if _sel_periodo in ETIQUETAS_PERIODO
+           else 2 if _param("p", len(CLAVES_PERIODO)) is None else _param("p", len(CLAVES_PERIODO)))
+_tema_url, _idioma_url = ("oscuro" if OSCURO else "claro"), IDIOMA
+conmutador_tema = _conmutador([
+    (f"?lang={_idioma_url}&tema={t}&s={idx_tema}&p={idx_per}", T[t], OSCURO == (t == "oscuro"), T[t]) for t in ("oscuro", "claro")])
+conmutador_idioma = _conmutador([
+    (f"?lang={c}&tema={_tema_url}&s={idx_tema}&p={idx_per}", f"{BANDERAS[c]}<span>{c.upper()}</span>", c == IDIOMA, n)
+    for c, n in (("es", "Español"), ("en", "English"))])
+st.markdown(
+    f'<div class="cabecera"><div><div class="encabezado"><img src="data:image/svg+xml;base64,{_logo()}" alt="GlobalAIze">'
+    f'<div class="titulo">{T["titulo"]}</div></div><div class="ultimo">{T["ultimo"].format(fecha=fecha_larga(hoy))}</div></div>'
+    f'<div class="controles">{conmutador_tema}{conmutador_idioma}</div></div>', unsafe_allow_html=True)
 # ── Tarjetas ──
 brecha = (serie["TCV_Blue"] / serie["TCV_Billete"] - 1) * 100
 tarjetas = [
@@ -666,18 +702,20 @@ if not btc.empty:
     tarjetas.append(tarjeta_diaria(T["bitcoin"], f"US$ {num(btc.iloc[-1], 0)}", btc, btc.iloc[-1]))
 with st.sidebar:
     st.markdown(f'<div class="tarjetas">{"".join(tarjetas)}</div>', unsafe_allow_html=True)
-
+st.markdown(f'<div class="tarjetas-movil"><div class="tarjetas">{"".join(tarjetas)}</div></div>', unsafe_allow_html=True)
 
 # ── Período ──
-periodos = {T["p1m"]: 1, T["p3m"]: 3, T["p6m"]: 6, T["p1a"]: 12, T["pytd"]: "ytd",
-            T["ptodo"].format(desde=mes_anio(primero)): None}
-tema_elegido = st.segmented_control("Tema / Topic", T["pest"], default=T["pest"][0], key=f"seccion_{IDIOMA}",
+periodos = dict(zip(ETIQUETAS_PERIODO, [1, 3, 6, 12, "ytd", None]))
+tema_elegido = st.segmented_control("Tema / Topic", T["pest"], default=T["pest"][idx_tema], key=f"seccion_{IDIOMA}",
                                     label_visibility="collapsed")
 tema_idx = T["pest"].index(tema_elegido) if tema_elegido in T["pest"] else 0
-col_periodo, FILTRO = st.columns([3, 4], vertical_alignment="bottom")
-with col_periodo:
-    elegido = st.segmented_control(T["periodo"], list(periodos), default=T["p6m"], key=f"periodo_{IDIOMA}")
-meses = periodos.get(elegido or T["p6m"], 6)
+elegido = st.segmented_control(T["periodo"], ETIQUETAS_PERIODO, default=ETIQUETAS_PERIODO[idx_per], key=f"periodo_{IDIOMA}")
+FILTRO = st.container()  # el filtro de cada tema, debajo del período
+# Streamlit descarta el estado de los widgets que no se dibujan: sin esto, los filtros de un tema vuelven a su valor
+# inicial al cambiar de tema y volver
+for _clave in [k for k in st.session_state if str(k).startswith(("of_", "par_", "br_", "din_"))]:
+    st.session_state[_clave] = st.session_state[_clave]
+meses = periodos.get(elegido or ETIQUETAS_PERIODO[2], 6)
 if meses == "ytd":
     desde = pd.Timestamp(hoy.year, 1, 1)
 elif meses is None:
@@ -693,7 +731,7 @@ def recorte(s: pd.Series, mensual: bool = False) -> pd.Series:
 
 
 def filtro(*args, **kwargs):
-    """El filtro de cada tema va en la fila de arriba, al lado del período."""
+    """El filtro de cada tema va debajo del período."""
     with FILTRO:
         return st.multiselect(*args, **kwargs)
 
@@ -807,5 +845,6 @@ if tema_idx == 11:  # Fuentes
     nota(T["nota_fuentes"].format(repo=REPO))
 
 # Al pie del centro: cómo leer las tarjetas y los enlaces
-nota(T["nota_tarjetas"].format(ayer=fecha_larga(ayer), anio=hoy.year - 1))
+st.markdown(f'<details class="nota"><summary>{T["como_leer"]}</summary>'
+            f'{T["nota_tarjetas"].format(ayer=fecha_larga(ayer), anio=hoy.year - 1)}</details>', unsafe_allow_html=True)
 st.markdown(f'<div class="pie" style="margin:4px 0 0; text-align:left">{T["pie"].format(repo=REPO)}</div>', unsafe_allow_html=True)
