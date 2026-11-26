@@ -696,6 +696,8 @@ adelantos_transitorios,2026-11-13,4091100.3704,millones de ARS,BCRA
 adelantos_transitorios,2026-11-16,4091100.3704,millones de ARS,BCRA
 adelantos_transitorios,2026-11-17,4091100.3704,millones de ARS,BCRA
 adelantos_transitorios,2026-11-18,4091100.3704,millones de ARS,BCRA
+adelantos_transitorios,2026-11-19,4091100.3704,millones de ARS,BCRA
+adelantos_transitorios,2026-11-20,4091100.3704,millones de ARS,BCRA
 base_monetaria,2024-01-02,9698733.0,millones de ARS,BCRA
 base_monetaria,2024-01-03,9676236.0,millones de ARS,BCRA
 base_monetaria,2024-01-04,9692584.0,millones de ARS,BCRA
@@ -1393,6 +1395,7 @@ base_monetaria,2026-11-13,48768448.0,millones de ARS,BCRA
 base_monetaria,2026-11-16,48539878.0,millones de ARS,BCRA
 base_monetaria,2026-11-17,47231268.0,millones de ARS,BCRA
 base_monetaria,2026-11-18,47361165.0,millones de ARS,BCRA
+base_monetaria,2026-11-19,47164454.0,millones de ARS,BCRA
 billetes_publico,2024-01-02,6641071.0,millones de ARS,BCRA
 billetes_publico,2024-01-03,6620361.0,millones de ARS,BCRA
 billetes_publico,2024-01-04,6620037.0,millones de ARS,BCRA
@@ -2079,17 +2082,18 @@ billetes_publico,2026-10-26,26606832.0,millones de ARS,BCRA
 billetes_publico,2026-10-27,26596628.0,millones de ARS,BCRA
 billetes_publico,2026-10-28,26663000.0,millones de ARS,BCRA
 billetes_publico,2026-10-29,26785944.0,millones de ARS,BCRA
-billetes_publico,2026-10-30,26854461.0,millones de ARS,BCRA
+billetes_publico,2026-10-30,26859294.0,millones de ARS,BCRA
 billetes_publico,2026-11-02,27019903.0,millones de ARS,BCRA
 billetes_publico,2026-11-03,26967364.0,millones de ARS,BCRA
 billetes_publico,2026-11-04,27003558.0,millones de ARS,BCRA
-billetes_publico,2026-11-05,27069725.0,millones de ARS,BCRA
+billetes_publico,2026-11-05,27122546.0,millones de ARS,BCRA
 billetes_publico,2026-11-11,27006056.0,millones de ARS,BCRA
 billetes_publico,2026-11-12,27121233.0,millones de ARS,BCRA
-billetes_publico,2026-11-13,27260202.0,millones de ARS,BCRA
+billetes_publico,2026-11-13,27258947.0,millones de ARS,BCRA
 billetes_publico,2026-11-16,27334241.0,millones de ARS,BCRA
 billetes_publico,2026-11-17,27285683.0,millones de ARS,BCRA
-billetes_publico,2026-11-18,27299798.0,millones de ARS,BCRA
+billetes_publico,2026-11-18,27300102.0,millones de ARS,BCRA
+billetes_publico,2026-11-19,27324812.0,millones de ARS,BCRA
 circulacion_monetaria,2024-01-02,7463885.0,millones de ARS,BCRA
 circulacion_monetaria,2024-01-03,7475870.0,millones de ARS,BCRA
 circulacion_monetaria,2024-01-04,7478077.0,millones de ARS,BCRA
@@ -2787,6 +2791,7 @@ circulacion_monetaria,2026-11-13,30050501.0,millones de ARS,BCRA
 circulacion_monetaria,2026-11-16,29995934.0,millones de ARS,BCRA
 circulacion_monetaria,2026-11-17,29884592.0,millones de ARS,BCRA
 circulacion_monetaria,2026-11-18,29831030.0,millones de ARS,BCRA
+circulacion_monetaria,2026-11-19,29814402.0,millones de ARS,BCRA
 deuda_bruta_tesoro,2024-01-31,381272.8,millones de USD,Secretaría de Finanzas
 deuda_bruta_tesoro,2024-02-29,386539.8,millones de USD,Secretaría de Finanzas
 deuda_bruta_tesoro,2024-03-31,403052.39999999997,millones de USD,Secretaría de Finanzas
@@ -3586,6 +3591,7 @@ letras_bcra_moneda_extranjera,2026-11-13,7564509.0,millones de ARS,BCRA
 letras_bcra_moneda_extranjera,2026-11-16,7577416.0,millones de ARS,BCRA
 letras_bcra_moneda_extranjera,2026-11-17,7590078.0,millones de ARS,BCRA
 letras_bcra_moneda_extranjera,2026-11-18,7619318.0,millones de ARS,BCRA
+letras_bcra_moneda_extranjera,2026-11-19,7642528.0,millones de ARS,BCRA
 letras_bcra_pesos,2024-01-02,156305.0,millones de ARS,BCRA
 letras_bcra_pesos,2024-01-03,153835.0,millones de ARS,BCRA
 letras_bcra_pesos,2024-01-04,154321.0,millones de ARS,BCRA
@@ -4283,6 +4289,7 @@ letras_bcra_pesos,2026-11-13,220116.0,millones de ARS,BCRA
 letras_bcra_pesos,2026-11-16,220476.0,millones de ARS,BCRA
 letras_bcra_pesos,2026-11-17,224112.0,millones de ARS,BCRA
 letras_bcra_pesos,2026-11-18,225060.0,millones de ARS,BCRA
+letras_bcra_pesos,2026-11-19,223086.0,millones de ARS,BCRA
 m2,2024-01-02,35033381.0,millones de ARS,BCRA
 m2,2024-01-03,34761450.0,millones de ARS,BCRA
 m2,2024-01-04,34884980.0,millones de ARS,BCRA
@@ -4963,22 +4970,23 @@ m2,2026-10-16,90671002.0,millones de ARS,BCRA
 m2,2026-10-19,90369619.0,millones de ARS,BCRA
 m2,2026-10-20,90884788.0,millones de ARS,BCRA
 m2,2026-10-21,91947488.0,millones de ARS,BCRA
-m2,2026-10-22,92209618.0,millones de ARS,BCRA
+m2,2026-10-22,92210614.0,millones de ARS,BCRA
 m2,2026-10-23,91801050.0,millones de ARS,BCRA
 m2,2026-10-26,92239180.0,millones de ARS,BCRA
 m2,2026-10-27,92149383.0,millones de ARS,BCRA
 m2,2026-10-28,93545792.0,millones de ARS,BCRA
-m2,2026-10-29,96189507.0,millones de ARS,BCRA
-m2,2026-10-30,96430536.0,millones de ARS,BCRA
+m2,2026-10-29,96188681.0,millones de ARS,BCRA
+m2,2026-10-30,96460126.0,millones de ARS,BCRA
 m2,2026-11-02,95435601.0,millones de ARS,BCRA
 m2,2026-11-03,94618430.0,millones de ARS,BCRA
 m2,2026-11-04,94979852.0,millones de ARS,BCRA
-m2,2026-11-05,95765159.0,millones de ARS,BCRA
+m2,2026-11-05,95817607.0,millones de ARS,BCRA
 m2,2026-11-11,93606002.0,millones de ARS,BCRA
-m2,2026-11-12,96248543.0,millones de ARS,BCRA
-m2,2026-11-13,96346418.0,millones de ARS,BCRA
+m2,2026-11-12,96248373.0,millones de ARS,BCRA
+m2,2026-11-13,96227824.0,millones de ARS,BCRA
 m2,2026-11-16,96407553.0,millones de ARS,BCRA
-m2,2026-11-17,94381145.0,millones de ARS,BCRA
+m2,2026-11-17,94398508.0,millones de ARS,BCRA
+m2,2026-11-18,95793861.0,millones de ARS,BCRA
 m2_transaccional_privado,2024-01-02,20233948.74,millones de ARS,BCRA
 m2_transaccional_privado,2024-01-03,20224622.768,millones de ARS,BCRA
 m2_transaccional_privado,2024-01-04,20356061.145,millones de ARS,BCRA
@@ -5659,22 +5667,23 @@ m2_transaccional_privado,2026-10-16,63061268.172,millones de ARS,BCRA
 m2_transaccional_privado,2026-10-19,62649285.626,millones de ARS,BCRA
 m2_transaccional_privado,2026-10-20,62350700.028,millones de ARS,BCRA
 m2_transaccional_privado,2026-10-21,62403049.422,millones de ARS,BCRA
-m2_transaccional_privado,2026-10-22,62715885.587,millones de ARS,BCRA
+m2_transaccional_privado,2026-10-22,62716881.587,millones de ARS,BCRA
 m2_transaccional_privado,2026-10-23,62296854.995,millones de ARS,BCRA
 m2_transaccional_privado,2026-10-26,62873238.5,millones de ARS,BCRA
 m2_transaccional_privado,2026-10-27,63022239.09,millones de ARS,BCRA
 m2_transaccional_privado,2026-10-28,64075296.062,millones de ARS,BCRA
-m2_transaccional_privado,2026-10-29,66412537.806,millones de ARS,BCRA
-m2_transaccional_privado,2026-10-30,69282837.217,millones de ARS,BCRA
+m2_transaccional_privado,2026-10-29,66411711.806,millones de ARS,BCRA
+m2_transaccional_privado,2026-10-30,69339759.217,millones de ARS,BCRA
 m2_transaccional_privado,2026-11-02,68930842.387,millones de ARS,BCRA
 m2_transaccional_privado,2026-11-03,68365431.193,millones de ARS,BCRA
 m2_transaccional_privado,2026-11-04,69356371.528,millones de ARS,BCRA
-m2_transaccional_privado,2026-11-05,70548986.695,millones de ARS,BCRA
-m2_transaccional_privado,2026-11-11,67811431.157,millones de ARS,BCRA
-m2_transaccional_privado,2026-11-12,68763347.569,millones de ARS,BCRA
-m2_transaccional_privado,2026-11-13,67408465.12,millones de ARS,BCRA
+m2_transaccional_privado,2026-11-05,70601434.695,millones de ARS,BCRA
+m2_transaccional_privado,2026-11-11,67870250.218,millones de ARS,BCRA
+m2_transaccional_privado,2026-11-12,68763177.569,millones de ARS,BCRA
+m2_transaccional_privado,2026-11-13,67232679.02,millones de ARS,BCRA
 m2_transaccional_privado,2026-11-16,65909413.312,millones de ARS,BCRA
-m2_transaccional_privado,2026-11-17,65262000.3,millones de ARS,BCRA
+m2_transaccional_privado,2026-11-17,65267849.3,millones de ARS,BCRA
+m2_transaccional_privado,2026-11-18,65254555.065,millones de ARS,BCRA
 m3,2024-01-31,58005492654.0,miles de ARS,BCRA
 m3,2024-02-29,61609739614.0,miles de ARS,BCRA
 m3,2024-03-31,67154832360.0,miles de ARS,BCRA
@@ -6394,17 +6403,18 @@ prestamos_sector_privado,2026-10-26,150366599.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-10-27,150907991.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-10-28,151176541.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-10-29,151406005.0,millones de ARS,BCRA
-prestamos_sector_privado,2026-10-30,151685000.0,millones de ARS,BCRA
+prestamos_sector_privado,2026-10-30,151661617.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-11-02,151686212.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-11-03,152035378.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-11-04,151448835.0,millones de ARS,BCRA
-prestamos_sector_privado,2026-11-05,151203509.0,millones de ARS,BCRA
+prestamos_sector_privado,2026-11-05,151205863.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-11-11,150268215.0,millones de ARS,BCRA
-prestamos_sector_privado,2026-11-12,151483403.0,millones de ARS,BCRA
-prestamos_sector_privado,2026-11-13,150749117.0,millones de ARS,BCRA
+prestamos_sector_privado,2026-11-12,151476393.0,millones de ARS,BCRA
+prestamos_sector_privado,2026-11-13,150880051.0,millones de ARS,BCRA
 prestamos_sector_privado,2026-11-16,150782817.0,millones de ARS,BCRA
-prestamos_sector_privado,2026-11-17,151441690.0,millones de ARS,BCRA
-prestamos_sector_privado,2026-11-18,151937009.0,millones de ARS,BCRA
+prestamos_sector_privado,2026-11-17,151410624.0,millones de ARS,BCRA
+prestamos_sector_privado,2026-11-18,151947825.0,millones de ARS,BCRA
+prestamos_sector_privado,2026-11-19,152284793.0,millones de ARS,BCRA
 tipo_cambio_mayorista,2024-01-02,810.65,ARS por USD,BCRA
 tipo_cambio_mayorista,2024-01-03,811.15,ARS por USD,BCRA
 tipo_cambio_mayorista,2024-01-04,811.75,ARS por USD,BCRA
@@ -7104,6 +7114,7 @@ tipo_cambio_mayorista,2026-11-17,1552.2627,ARS por USD,BCRA
 tipo_cambio_mayorista,2026-11-18,1558.2427,ARS por USD,BCRA
 tipo_cambio_mayorista,2026-11-19,1562.9893,ARS por USD,BCRA
 tipo_cambio_mayorista,2026-11-20,1575.9572,ARS por USD,BCRA
+tipo_cambio_mayorista,2026-11-24,1592.0227,ARS por USD,BCRA
 bitcoin,2024-01-01,44167.33,USD,Yahoo Finance
 bitcoin,2024-01-02,44957.97,USD,Yahoo Finance
 bitcoin,2024-01-03,42848.18,USD,Yahoo Finance
@@ -8162,4 +8173,5 @@ bitcoin,2026-11-20,58798.98,USD,Yahoo Finance
 bitcoin,2026-11-21,60094.09,USD,Yahoo Finance
 bitcoin,2026-11-22,61161.91,USD,Yahoo Finance
 bitcoin,2026-11-23,61210.98,USD,Yahoo Finance
-bitcoin,2026-11-25,59133.48,USD,Yahoo Finance
+bitcoin,2026-11-24,59747.77,USD,Yahoo Finance
+bitcoin,2026-11-26,60985.13,USD,Yahoo Finance
